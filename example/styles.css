@@ -6,7 +6,8 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   margin: 0;
   padding: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) no-repeat fixed
+    100% 100%;
   min-height: 100vh;
   color: white;
 }
@@ -311,6 +312,51 @@ input[type="number"]::placeholder {
   margin-top: 1rem;
   font-style: italic;
   opacity: 0.8;
+}
+
+.pinch-status-card {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 1rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.pinch-status-header {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.pinch-status-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  opacity: 0.95;
+}
+
+.pinch-status-content {
+  text-align: center;
+}
+
+.pinch-status-disabled {
+  color: #dc2e2edf;
+  font-weight: bold;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.pinch-status-deactivated {
+  color: #ffb06b;
+  font-weight: bold;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.pinch-status-enabled {
+  color: #90ee90;
+  font-weight: bold;
+  text-shadow: 0 0px 1px rgba(0, 0, 0, 0.1);
 }
 
 @media (max-width: 768px) {

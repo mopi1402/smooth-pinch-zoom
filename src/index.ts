@@ -10,6 +10,7 @@ import {
   DEFAULT_VIEWPORT_VALUES,
 } from "./config/defaultConfig";
 import { ViewportParser } from "./utils/viewportParser";
+import { BrowserSupport } from "./utils/browserSupport";
 
 export class SmoothPinchZoom {
   private currentZoom = 1;
@@ -22,6 +23,7 @@ export class SmoothPinchZoom {
   private enableWheelZoom: boolean;
   private enablePinchZoom: boolean;
   private autoReadViewport: boolean;
+  private useExperimentalCssZoom: boolean;
 
   private isPinching = false;
   private baseZoom = 1;
@@ -30,6 +32,7 @@ export class SmoothPinchZoom {
   private isDestroyed = false;
   private viewportValues: ViewportValues;
   private animationController: AnimationController;
+  private supportsCSSZoom: boolean;
 
   constructor(options: SmoothPinchZoomOptions = {}) {
     this.autoReadViewport =
@@ -60,8 +63,19 @@ export class SmoothPinchZoom {
       options.enableWheelZoom ?? DEFAULT_CONFIG.enableWheelZoom;
     this.enablePinchZoom =
       options.enablePinchZoom ?? DEFAULT_CONFIG.enablePinchZoom;
+    this.useExperimentalCssZoom =
+      options.useExperimentalCssZoom ?? DEFAULT_CONFIG.useExperimentalCssZoom;
 
     this.animationController = new AnimationController();
+
+    // Detect CSS zoom support once (only if experimental zoom is enabled)
+    this.supportsCSSZoom =
+      this.useExperimentalCssZoom && BrowserSupport.hasCSSZoom();
+
+    // Initialize transform properties once for better performance
+    if (!this.supportsCSSZoom) {
+      document.body.style.transformOrigin = "0 0";
+    }
 
     this.init();
   }
@@ -170,23 +184,43 @@ export class SmoothPinchZoom {
   }
 
   private applyDefaultZoom(zoomLevel: number): void {
-    if (CSS.supports("zoom", "1")) {
-      // Use CSS zoom for Chromium browsers
-      document.documentElement.style.zoom = zoomLevel.toString();
-    } else {
-      // Fallback with transform for Firefox
-      document.body.style.transform = `scale(${zoomLevel})`;
-      document.body.style.transformOrigin = "0 0";
+    // Check if zoom is close enough to 100% to consider it as default state
+    const isZoom100 = Math.abs(zoomLevel - 1) < 0.001; // 0.1% tolerance
 
-      // Adjust body dimensions to prevent layout issues
-      const inverseZoom = 1 / zoomLevel;
-      document.body.style.width = `${100 * inverseZoom}%`;
-      document.body.style.height = `${100 * inverseZoom}%`;
+    if (isZoom100) {
+      // Reset to default state - remove all zoom styles for maximum performance
+      if (this.supportsCSSZoom) {
+        document.documentElement.style.removeProperty("zoom");
+      } else {
+        document.body.style.removeProperty("transform");
+        document.body.style.removeProperty("height");
+        document.body.style.removeProperty("width");
+      }
+    } else {
+      if (this.supportsCSSZoom) {
+        document.documentElement.style.zoom = zoomLevel.toString();
+      } else {
+        document.body.style.transform = `scale(${zoomLevel})`;
+        const inverseZoom = 1 / zoomLevel;
+        document.body.style.width = `${100 * inverseZoom}%`;
+        document.body.style.height = `${100 * inverseZoom}%`;
+      }
     }
+
+    // Dispatch event after zoom has been applied to DOM
+    window.dispatchEvent(
+      new CustomEvent("smoothZoomApplied", {
+        detail: {
+          zoomLevel,
+          percentage: zoomLevel * 100,
+          isDefaultState: isZoom100,
+        },
+      })
+    );
   }
 
   private getCurrentAppliedZoom(): number {
-    if (CSS.supports("zoom", "1")) {
+    if (this.supportsCSSZoom) {
       return parseFloat(document.documentElement.style.zoom || "1");
     } else {
       const transform = document.body.style.transform;
@@ -310,41 +344,6 @@ export class SmoothPinchZoom {
     });
   }
 
-  /** Smoothly zoom to fit specific bounds (useful for focus areas) */
-  public animateZoomToFit(
-    scale: number,
-    options?: {
-      duration?: number;
-      easing?: EasingType;
-      onComplete?: () => void;
-    }
-  ): Promise<void> {
-    const targetPercentage = scale * 100;
-    return this.animateZoom(targetPercentage, options);
-  }
-
-  /** Animate through multiple zoom levels (keyframes) */
-  public animateZoomKeyframes(
-    percentages: number[],
-    options?: {
-      duration?: number;
-      easing?: EasingType;
-      onComplete?: () => void;
-    }
-  ): Promise<void> {
-    const zoomLevels = percentages.map((p) => this.clampZoom(p / 100));
-
-    return this.animationController.animateKeyframes(zoomLevels, {
-      duration: options?.duration,
-      easing: options?.easing,
-      onUpdate: (value) => {
-        this.currentZoom = value;
-        this.applyZoom(value, "api");
-      },
-      onComplete: options?.onComplete,
-    });
-  }
-
   /** Cancel any ongoing zoom animation */
   public cancelAnimation(): void {
     this.animationController.cancel();
@@ -357,11 +356,7 @@ export class SmoothPinchZoom {
 
   /** Check if browser supports the required APIs */
   public static isSupported(): boolean {
-    return (
-      typeof window !== "undefined" &&
-      "visualViewport" in window &&
-      "addEventListener" in document
-    );
+    return BrowserSupport.isSupported();
   }
 
   /** Destroy the instance and clean up event listeners */

@@ -1,39 +1,48 @@
 import typescript from "@rollup/plugin-typescript";
+import { dts } from "rollup-plugin-dts";
+import terser from "@rollup/plugin-terser";
 
 export default [
-  // ES Module build
-  {
-    input: "src/index.ts",
-    output: {
-      file: "dist/index.esm.js",
-      format: "es",
-      sourcemap: true,
-    },
-    plugins: [typescript()],
-  },
-
-  // CommonJS build
+  // UMD build for browsers (single file) - MINIFIED
   {
     input: "src/index.ts",
     output: {
       file: "dist/index.js",
-      format: "cjs",
-      sourcemap: true,
+      format: "umd",
+      name: "SmoothPinchZoom",
+      sourcemap: false,
       exports: "named",
     },
-    plugins: [typescript()],
+    plugins: [
+      typescript({
+        tsconfig: "./tsconfig.json",
+        declaration: false,
+        declarationMap: false,
+      }),
+      terser({
+        compress: {
+          drop_console: true, // Supprime console.log
+          drop_debugger: true, // Supprime debugger
+          pure_funcs: ["console.log"], // Supprime les appels console
+          passes: 2, // Plus de passes d'optimisation
+        },
+        mangle: {
+          toplevel: true, // Mangle les noms de variables globales
+        },
+        format: {
+          comments: false, // Supprime tous les commentaires
+        },
+      }),
+    ],
   },
 
-  // UMD build for browsers
+  // TypeScript declarations only
   {
     input: "src/index.ts",
     output: {
-      file: "dist/index.umd.js",
-      format: "umd",
-      name: "SmoothPinchZoom",
-      sourcemap: true,
-      exports: "named",
+      file: "dist/index.d.ts",
+      format: "es",
     },
-    plugins: [typescript()],
+    plugins: [dts()],
   },
 ];

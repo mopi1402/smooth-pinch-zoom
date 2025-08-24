@@ -22,6 +22,5 @@ export interface AnimationState {
   startValue: number;
   targetValue: number;
   currentValue: number;
-  startTime: number;
   duration: number;
 }

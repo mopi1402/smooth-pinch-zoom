@@ -72,6 +72,7 @@ const zoom = new SmoothPinchZoom({
   // Features
   enablePinchZoom: true, // Touch/trackpad pinch
   enableWheelZoom: true, // Ctrl + scroll wheel
+  useExperimentalCssZoom: false, // CSS zoom (may cause rendering delays)
 
   // Callbacks
   onZoomChange: (zoomLevel, percentage) => {
@@ -93,15 +94,16 @@ const zoom = new SmoothPinchZoom({
 
 #### Constructor Options
 
-| Option                 | Type     | Default | Description                     |
-| ---------------------- | -------- | ------- | ------------------------------- |
-| `minZoom`              | number   | 0.25    | Minimum zoom level (25%)        |
-| `maxZoom`              | number   | 5.0     | Maximum zoom level (500%)       |
-| `wheelIncrement`       | number   | 0.01    | Zoom step for wheel scroll (1%) |
-| `enablePinchZoom`      | boolean  | true    | Enable touch/trackpad pinch     |
-| `enableWheelZoom`      | boolean  | true    | Enable Ctrl+wheel zoom          |
-| `onZoomChange`         | function | -       | Callback for zoom changes       |
-| `customZoomApplicator` | function | -       | Custom zoom implementation      |
+| Option                      | Type     | Default | Description                     |
+| --------------------------- | -------- | ------- | ------------------------------- |
+| `minZoom`                   | number   | 0.25    | Minimum zoom level (25%)        |
+| `maxZoom`                   | number   | 5.0     | Maximum zoom level (500%)       |
+| `wheelIncrement`            | number   | 0.01    | Zoom step for wheel scroll (1%) |
+| `enablePinchZoom`           | boolean  | true    | Enable touch/trackpad pinch     |
+| `enableWheelZoom`           | boolean  | true    | Enable Ctrl+wheel zoom          |
+| `useExperimentalCssZoom` ⚠️ | boolean  | false   | Enable CSS zoom (experimental)  |
+| `onZoomChange`              | function | -       | Callback for zoom changes       |
+| `customZoomApplicator`      | function | -       | Custom zoom implementation      |
 
 #### Methods
 
@@ -213,6 +215,47 @@ if (SmoothPinchZoom.isSupported()) {
 - ✅ Continuous precision: Any percentage you want
 - ✅ Clean page-level zoom: Interface stays coherent
 - ✅ Best of both worlds: Smooth gestures + proper zoom behavior
+- ✅ Performance optimized: Uses `transform: scale()` by default
+- ✅ No rendering delays: Smooth 60fps zoom experience
+
+## ⚡ Performance Options
+
+### CSS Zoom vs Transform
+
+The library offers two zoom implementation strategies:
+
+**Default (Recommended): `useExperimentalCssZoom: false`**
+
+- Uses `transform: scale()` everywhere
+- **Optimal performance** and smooth rendering
+- **No rendering delays** or visual glitches
+- Works consistently across all browsers
+
+**Experimental: `useExperimentalCssZoom: true`**
+
+- Uses CSS `zoom` property on supported browsers
+- **May cause rendering delays** and performance issues
+- **Known bug**: Elements can take time to render after zoom
+- Only enable if you specifically need CSS zoom behavior
+
+```javascript
+// Performance optimized (default)
+const zoom = new SmoothPinchZoom({
+  useExperimentalCssZoom: false, // Uses transform: scale()
+});
+
+// Experimental mode (may have performance issues)
+const zoom = new SmoothPinchZoom({
+  useExperimentalCssZoom: true, // Uses CSS zoom where supported
+});
+```
+
+### Why Transform is Better
+
+- **Hardware acceleration**: `transform` is GPU-accelerated
+- **No layout recalculation**: Only visual transformation
+- **Smooth animations**: 60fps rendering guaranteed
+- **Cross-browser consistency**: Same behavior everywhere
 
 ## 📱 Mobile Considerations
 
@@ -249,6 +292,12 @@ html {
 
 - Use `customZoomApplicator` to target specific elements
 - Test with different CSS zoom vs transform approaches
+
+**Rendering delays or slow zoom?**
+
+- This is a known issue with CSS `zoom` property on some browsers
+- **Solution**: Keep `useExperimentalCssZoom: false` (default)
+- The library automatically uses `transform: scale()` for optimal performance
 
 ## 🚀 Contributing
 

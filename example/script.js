@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Initialize with custom options
   smoothZoom = new SmoothPinchZoom.SmoothPinchZoom({
     wheelIncrement: 0.02,
+    useExperimentalCssZoom: false, // Disabled by default for optimal performance
 
     onZoomChange: function (zoomLevel, percentage) {
       updateZoomDisplay(percentage);
@@ -24,16 +25,25 @@ document.addEventListener("DOMContentLoaded", function () {
     updateZoomStatus(`Zoomed via ${source}: ${percentage}%`);
   });
 
+  // Listen to zoom applied events (after DOM update)
+  window.addEventListener("smoothZoomApplied", function (event) {
+    const { percentage } = event.detail;
+    updatePinchZoomStatus(percentage);
+  });
+
   // Update input constraints based on actual zoom limits
   updateInputConstraints();
 
   // Setup FPS control
   setupFPSControl();
+
+  // Update pinch zoom status display
+  updatePinchZoomStatus(100);
 });
 
 // UI Update Functions
 function updateZoomDisplay(percentage) {
-  // Afficher avec 2 décimales pour plus de précision
+  // Display with 2 decimal places for more precision
   const formattedPercentage = percentage.toFixed(2);
   document.getElementById("zoomDisplay").textContent =
     formattedPercentage + "%";
@@ -221,4 +231,64 @@ function setupFPSControl() {
       smoothZoom.animationController.setTargetFPS(fps);
     }
   });
+}
+
+function updatePinchZoomStatus(percentage) {
+  const statusDisplay = document.getElementById("pinchStatusDisplay");
+
+  // Check compatibility and state
+  const isCompatible = SmoothPinchZoom.SmoothPinchZoom.isSupported();
+  const isPinchEnabled =
+    smoothZoom && smoothZoom.enablePinchZoom && isCompatible;
+  const currentZoom = smoothZoom ? smoothZoom.getZoom() : 1;
+  const isZoomActive = Math.abs(currentZoom - 100) > 0.001;
+
+  // State 1: DISABLED (not compatible)
+  if (!isCompatible) {
+    statusDisplay.innerHTML = `
+      <div class="pinch-status-disabled">
+        ❌ Pinch Zoom: DISABLED
+      </div>
+      <p style="margin-top: 0.5rem; opacity: 0.8; font-size: 0.9rem;">
+        Not supported by this browser. Use Ctrl+scroll or buttons.
+      </p>
+    `;
+    return;
+  }
+
+  // State 2: DEACTIVATED (zoom at 100%)
+  if (isPinchEnabled && !isZoomActive) {
+    statusDisplay.innerHTML = `
+      <div class="pinch-status-deactivated">
+        ⚠️ Pinch Zoom: DEACTIVATED
+      </div>
+      <p style="margin-top: 0.5rem; opacity: 0.8; font-size: 0.9rem;">
+        Zoom at 100% - No zoom applied. Use Ctrl+scroll or buttons.
+      </p>
+    `;
+    return;
+  }
+
+  // State 3: ENABLED (active zoom)
+  if (isPinchEnabled && isZoomActive) {
+    statusDisplay.innerHTML = `
+      <div class="pinch-status-enabled">
+        ✅ Pinch Zoom: ENABLED
+      </div>
+      <p style="margin-top: 0.5rem; opacity: 0.8; font-size: 0.9rem;">
+        Active zoom - You can use pinch gestures on trackpad and mobile
+      </p>
+    `;
+    return;
+  }
+
+  // Default state: DEACTIVATED (manually disabled)
+  statusDisplay.innerHTML = `
+    <div class="pinch-status-disabled">
+      ⚠️ Pinch Zoom: DEACTIVATED
+    </div>
+    <p style="margin-top: 0.5rem; opacity: 0.8; font-size: 0.9rem;">
+      Disabled for performance reasons. Use Ctrl+scroll or buttons.
+    </p>
+  `;
 }

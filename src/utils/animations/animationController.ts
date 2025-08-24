@@ -37,7 +37,6 @@ export class AnimationController {
         startValue,
         targetValue,
         currentValue: startValue,
-        startTime,
         duration,
       };
 
@@ -48,8 +47,7 @@ export class AnimationController {
           return;
         }
 
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
+        const progress = Math.min((currentTime - startTime) / duration, 1);
         const easedProgress = easingFunction(progress);
 
         const currentValue = startValue + valueDelta * easedProgress;
@@ -78,8 +76,6 @@ export class AnimationController {
 
           // Final update with exact target value
           options.onUpdate?.(targetValue);
-          const currentValue = startValue + valueDelta * easedProgress;
-
           options.onComplete?.();
           resolve();
         }
@@ -87,24 +83,6 @@ export class AnimationController {
 
       this.animationFrameId = requestAnimationFrame(animate);
     });
-  }
-
-  public async animateKeyframes(
-    keyframes: number[],
-    options: AnimationOptions = {}
-  ): Promise<void> {
-    if (keyframes.length < 2) {
-      throw new Error("At least 2 keyframes are required");
-    }
-
-    const segmentDuration = (options.duration ?? 1000) / (keyframes.length - 1);
-
-    for (let i = 0; i < keyframes.length - 1; i++) {
-      await this.animate(keyframes[i], keyframes[i + 1], {
-        ...options,
-        duration: segmentDuration,
-      });
-    }
   }
 
   public cancel(): void {
@@ -121,17 +99,6 @@ export class AnimationController {
 
   public isAnimating(): boolean {
     return this.currentAnimation?.isActive ?? false;
-  }
-
-  public getState(): AnimationState | undefined {
-    return this.currentAnimation ? { ...this.currentAnimation } : undefined;
-  }
-
-  public getProgress(): number {
-    if (!this.currentAnimation?.isActive) return 0;
-
-    const elapsed = performance.now() - this.currentAnimation.startTime;
-    return Math.min(elapsed / this.currentAnimation.duration, 1);
   }
 
   public setTargetFPS(fps: number): void {

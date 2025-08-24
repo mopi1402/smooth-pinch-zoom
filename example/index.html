@@ -103,6 +103,17 @@
         <div class="status" id="zoomStatus">
           Ready - Try pinching or Ctrl+scroll!
         </div>
+
+        <div class="pinch-status-card">
+          <div class="pinch-status-header">
+            <h3>📱 Pinch Zoom Status</h3>
+          </div>
+          <div class="pinch-status-content">
+            <div id="pinchStatusDisplay">
+              <!-- Le statut sera affiché ici par JavaScript -->
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="demo-content">
@@ -163,7 +174,7 @@
     </div>
 
     <!-- Include the library (in production, use npm install) -->
-    <script src="../dist/index.umd.js"></script>
+    <script src="../dist/index.js"></script>
 
     <!-- Include our custom script after the library -->
     <script src="script.js"></script>

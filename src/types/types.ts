@@ -10,6 +10,7 @@ export interface SmoothPinchZoomOptions {
   enableWheelZoom?: boolean;
   enablePinchZoom?: boolean;
   autoReadViewport?: boolean;
+  useExperimentalCssZoom?: boolean;
 }
 
 export interface ZoomEvent {
