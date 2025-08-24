@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=3"
+    />
+    <title>Smooth Pinch Zoom Demo</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🎯 Smooth Pinch Zoom Demo</h1>
+        <p>
+          Experience surgical precision zoom - zoom to any percentage you want!
+        </p>
+      </div>
+
+      <div class="zoom-controls">
+        <div class="zoom-display" id="zoomDisplay">100%</div>
+
+        <div class="button-group">
+          <button onclick="minZoom()">Min Zoom</button>
+          <button onclick="zoomOut()">Zoom Out (−10%)</button>
+          <button onclick="resetZoom()">Reset (100%)</button>
+          <button onclick="zoomIn()">Zoom In (+10%)</button>
+          <button onclick="maxZoom()">Max Zoom</button>
+        </div>
+
+        <div class="zoom-input">
+          <input
+            type="number"
+            id="customZoom"
+            placeholder="127.33"
+            step="0.01"
+          />
+          <button onclick="setCustomZoom()">Set Zoom</button>
+        </div>
+
+        <div class="animation-card">
+          <div class="animation-header">
+            <h3>🎬 Animation Settings</h3>
+          </div>
+
+          <div class="animation-content">
+            <div class="animation-toggle">
+              <label>
+                <input type="checkbox" id="enableAnimations" checked />
+                <span>Enable smooth animations</span>
+              </label>
+            </div>
+
+            <div class="animation-settings">
+              <div class="setting-group">
+                <label>Animation Type:</label>
+                <select id="animationType">
+                  <option value="back">Back</option>
+                  <option value="easeInOut">Ease In Out</option>
+                  <option value="easeIn">Ease In</option>
+                  <option value="easeOut">Ease Out</option>
+                  <option value="linear">Linear</option>
+                  <option value="spring">Spring</option>
+                  <option value="bounce">Bounce</option>
+                  <option value="elastic">Elastic</option>
+                </select>
+              </div>
+
+              <div class="setting-group">
+                <label>Duration:</label>
+                <div class="duration-input">
+                  <input
+                    type="number"
+                    id="animationDuration"
+                    value="500"
+                    min="50"
+                    max="5000"
+                    step="50"
+                  />
+                  <span>ms</span>
+                </div>
+              </div>
+
+              <div class="setting-group">
+                <label>Target FPS:</label>
+                <div class="fps-input">
+                  <input
+                    type="number"
+                    id="targetFPS"
+                    value="60"
+                    min="30"
+                    max="120"
+                    step="15"
+                  />
+                  <span>fps</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="status" id="zoomStatus">
+          Ready - Try pinching or Ctrl+scroll!
+        </div>
+      </div>
+
+      <div class="demo-content">
+        <h2>Test Content</h2>
+        <p>
+          This is sample content to test the zoom functionality. Notice how
+          everything scales smoothly and precisely!
+        </p>
+
+        <div class="demo-grid">
+          <div class="demo-card">
+            <h3>Card 1</h3>
+            <p>
+              This card will scale perfectly with the zoom level. Try zooming to
+              exactly 137% - you can't do that with browser zoom!
+            </p>
+          </div>
+
+          <div class="demo-card">
+            <h3>Card 2</h3>
+            <p>
+              Watch how UI elements stay in perfect proportion and nothing
+              "falls off" the screen like with pinch-to-zoom.
+            </p>
+          </div>
+
+          <div class="demo-card">
+            <h3>Card 3</h3>
+            <p>
+              The zoom is applied at the page level, just like browser zoom, but
+              with continuous precision!
+            </p>
+          </div>
+        </div>
+
+        <div class="instructions">
+          <h3>How to Test:</h3>
+          <ul>
+            <li>
+              <strong>Desktop:</strong> Hold Ctrl and scroll with mouse wheel
+            </li>
+            <li>
+              <strong>Trackpad:</strong> Pinch gesture on MacBook trackpad
+            </li>
+            <li><strong>Mobile/Tablet:</strong> Two-finger pinch gesture</li>
+            <li>
+              <strong>Manual:</strong> Use the buttons above or enter a custom
+              percentage
+            </li>
+          </ul>
+
+          <p>
+            <strong>Pro tip:</strong> Try zooming to unusual percentages like
+            63%, 137%, or 242% - impossible with standard browser zoom!
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Include the library (in production, use npm install) -->
+    <script src="../dist/index.umd.js"></script>
+
+    <!-- Include our custom script after the library -->
+    <script src="script.js"></script>
+  </body>
+</html>

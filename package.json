@@ -1,0 +1,50 @@
+{
+  "name": "smooth-pinch-zoom",
+  "version": "1.0.0",
+  "description": "Transform pinch-to-zoom gestures into smooth, precise page-level zoom with continuous granularity",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "test": "jest",
+    "serve": "live-server --port=8000 --open=/example/",
+    "start": "npm run build && npm run serve",
+    "dev-serve": "npm run dev & npm run serve",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "zoom",
+    "pinch",
+    "touch",
+    "gesture",
+    "responsive",
+    "accessibility",
+    "browser"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/smooth-pinch-zoom.git"
+  },
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^11.1.5",
+    "rollup": "^4.9.6",
+    "typescript": "^5.3.3",
+    "tslib": "^2.6.2",
+    "jest": "^29.7.0",
+    "live-server": "^1.2.2"
+  },
+  "peerDependencies": {},
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
