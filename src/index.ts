@@ -11,6 +11,7 @@ import {
 } from "./config/defaultConfig";
 import { ViewportParser } from "./utils/viewportParser";
 import { BrowserSupport } from "./utils/browserSupport";
+import { MobilePinchHandler } from "./utils/MobilePinchHandler";
 
 export class SmoothPinchZoom {
   private currentZoom = 1;
@@ -29,6 +30,7 @@ export class SmoothPinchZoom {
   private baseZoom = 1;
   private wheelListener?: (e: WheelEvent) => void;
   private visualViewportListener?: () => void;
+  private mobilePinchHandler?: MobilePinchHandler;
   private isDestroyed = false;
   private viewportValues: ViewportValues;
   private animationController: AnimationController;
@@ -100,34 +102,30 @@ export class SmoothPinchZoom {
       return;
     }
 
-    this.visualViewportListener = () => {
-      if (this.isDestroyed) return;
+    // Only add touch listeners on devices that support touch
+    if (!("ontouchstart" in window)) {
+      return;
+    }
 
-      const pinchScale = window.visualViewport!.scale;
-
-      if (pinchScale !== 1) {
-        if (!this.isPinching) {
-          // Start of pinch gesture
-          this.baseZoom = this.currentZoom;
-          this.isPinching = true;
-        }
-
-        // Calculate new zoom with continuous precision
-        const newZoom = this.baseZoom * pinchScale;
-        const clampedZoom = this.clampZoom(newZoom);
-
-        this.applyZoom(clampedZoom, "pinch");
-      } else if (this.isPinching) {
-        // End of pinch gesture
+    // Use the dedicated mobile pinch handler
+    this.mobilePinchHandler = new MobilePinchHandler(document, {
+      onPinchStart: () => {
+        this.isPinching = true;
+        this.baseZoom = this.currentZoom;
+      },
+      onPinchChange: (
+        scaleChange: number,
+        centerX: number,
+        centerY: number
+      ) => {
+        const newZoom = this.clampZoom(this.baseZoom * scaleChange);
+        this.applyZoom(newZoom, "pinch");
+      },
+      onPinchEnd: () => {
         this.isPinching = false;
         this.currentZoom = this.getCurrentAppliedZoom();
-      }
-    };
-
-    window.visualViewport.addEventListener(
-      "resize",
-      this.visualViewportListener
-    );
+      },
+    });
   }
 
   private setupWheelZoom(): void {
@@ -186,6 +184,9 @@ export class SmoothPinchZoom {
   private applyDefaultZoom(zoomLevel: number): void {
     // Check if zoom is close enough to 100% to consider it as default state
     const isZoom100 = Math.abs(zoomLevel - 1) < 0.001; // 0.1% tolerance
+
+    // Update CSS custom property for responsive spacing
+    document.documentElement.style.setProperty("--zoom", zoomLevel.toString());
 
     if (isZoom100) {
       // Reset to default state - remove all zoom styles for maximum performance
@@ -375,6 +376,11 @@ export class SmoothPinchZoom {
         "resize",
         this.visualViewportListener
       );
+    }
+
+    // Clean up mobile pinch handler
+    if (this.mobilePinchHandler) {
+      this.mobilePinchHandler.destroy();
     }
 
     // Reset zoom to initial

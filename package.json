@@ -16,7 +16,10 @@
     "serve": "live-server --port=8000 --open=/example/",
     "start": "npm run build && npm run serve",
     "dev-serve": "npm run dev & npm run serve",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "build:demo": "npm run build && cp -r dist example/",
+    "deploy": "npm run build:demo && vercel --prod",
+    "deploy:preview": "npm run build:demo && vercel"
   },
   "keywords": [
     "zoom",
@@ -42,7 +45,8 @@
     "rollup-plugin-analyzer": "^4.0.0",
     "rollup-plugin-dts": "^6.2.3",
     "tslib": "^2.6.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vercel": "^33.5.1"
   },
   "browserslist": [
     "> 1%",

@@ -1,49 +1,35 @@
 let smoothZoom;
 
-// Initialize Smooth Pinch Zoom
 document.addEventListener("DOMContentLoaded", function () {
-  // Check support
   if (!SmoothPinchZoom.SmoothPinchZoom.isSupported()) {
     document.getElementById("zoomStatus").textContent =
       "Browser not fully supported - some features may not work";
     document.getElementById("zoomStatus").style.color = "#ffcc00";
   }
 
-  // Initialize with custom options
   smoothZoom = new SmoothPinchZoom.SmoothPinchZoom({
     wheelIncrement: 0.02,
-    useExperimentalCssZoom: false, // Disabled by default for optimal performance
-
     onZoomChange: function (zoomLevel, percentage) {
       updateZoomDisplay(percentage);
     },
   });
 
-  // Listen to zoom change events
   window.addEventListener("smoothZoomChange", function (event) {
     const { percentage, source } = event.detail;
     updateZoomStatus(`Zoomed via ${source}: ${percentage}%`);
   });
 
-  // Listen to zoom applied events (after DOM update)
   window.addEventListener("smoothZoomApplied", function (event) {
     const { percentage } = event.detail;
     updatePinchZoomStatus(percentage);
   });
 
-  // Update input constraints based on actual zoom limits
   updateInputConstraints();
-
-  // Setup FPS control
   setupFPSControl();
-
-  // Update pinch zoom status display
   updatePinchZoomStatus(100);
 });
 
-// UI Update Functions
 function updateZoomDisplay(percentage) {
-  // Display with 2 decimal places for more precision
   const formattedPercentage = percentage.toFixed(2);
   document.getElementById("zoomDisplay").textContent =
     formattedPercentage + "%";
@@ -54,7 +40,6 @@ function updateZoomStatus(message) {
   statusEl.textContent = message;
   statusEl.style.color = "#90EE90";
 
-  // Clear the message after 3 seconds
   setTimeout(() => {
     statusEl.textContent = "Ready - Try pinching or Ctrl+scroll!";
     statusEl.style.color = "";
@@ -73,7 +58,6 @@ function updateInputConstraints() {
   }
 }
 
-// Control Functions
 async function zoomIn() {
   if (smoothZoom) {
     const enableAnim = document.getElementById("enableAnimations").checked;
@@ -207,7 +191,6 @@ async function setCustomZoom() {
   }
 }
 
-// Enter key support for custom zoom
 document
   .getElementById("customZoom")
   .addEventListener("keypress", function (e) {
@@ -216,7 +199,6 @@ document
     }
   });
 
-// Cleanup on page unload
 window.addEventListener("beforeunload", function () {
   if (smoothZoom) {
     smoothZoom.destroy();
@@ -236,14 +218,12 @@ function setupFPSControl() {
 function updatePinchZoomStatus(percentage) {
   const statusDisplay = document.getElementById("pinchStatusDisplay");
 
-  // Check compatibility and state
   const isCompatible = SmoothPinchZoom.SmoothPinchZoom.isSupported();
   const isPinchEnabled =
     smoothZoom && smoothZoom.enablePinchZoom && isCompatible;
   const currentZoom = smoothZoom ? smoothZoom.getZoom() : 1;
   const isZoomActive = Math.abs(currentZoom - 100) > 0.001;
 
-  // State 1: DISABLED (not compatible)
   if (!isCompatible) {
     statusDisplay.innerHTML = `
       <div class="pinch-status-disabled">
@@ -256,7 +236,6 @@ function updatePinchZoomStatus(percentage) {
     return;
   }
 
-  // State 2: DEACTIVATED (zoom at 100%)
   if (isPinchEnabled && !isZoomActive) {
     statusDisplay.innerHTML = `
       <div class="pinch-status-deactivated">
@@ -269,7 +248,6 @@ function updatePinchZoomStatus(percentage) {
     return;
   }
 
-  // State 3: ENABLED (active zoom)
   if (isPinchEnabled && isZoomActive) {
     statusDisplay.innerHTML = `
       <div class="pinch-status-enabled">
@@ -282,7 +260,6 @@ function updatePinchZoomStatus(percentage) {
     return;
   }
 
-  // Default state: DEACTIVATED (manually disabled)
   statusDisplay.innerHTML = `
     <div class="pinch-status-disabled">
       ⚠️ Pinch Zoom: DEACTIVATED
