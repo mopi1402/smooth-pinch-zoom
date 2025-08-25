@@ -1,0 +1,13 @@
+@function zoom-clamp($min, $preferred, $max, $pow: 1) {
+  @if $pow > 5 {
+    @error "zoom-clamp: $pow cannot exceed 5 (got #{$pow})";
+  }
+  $zoom-string: "";
+  @for $i from 1 through $pow {
+    $zoom-string: $zoom-string + "var(--zoom)";
+    @if $i < $pow {
+      $zoom-string: $zoom-string + " * ";
+    }
+  }
+  @return clamp($min, calc($preferred / (#{$zoom-string})), $max);
+}

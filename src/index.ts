@@ -70,11 +70,9 @@ export class SmoothPinchZoom {
 
     this.animationController = new AnimationController();
 
-    // Detect CSS zoom support once (only if experimental zoom is enabled)
     this.supportsCSSZoom =
       this.useExperimentalCssZoom && BrowserSupport.hasCSSZoom();
 
-    // Initialize transform properties once for better performance
     if (!this.supportsCSSZoom) {
       document.body.style.transformOrigin = "0 0";
     }
@@ -83,7 +81,6 @@ export class SmoothPinchZoom {
   }
 
   private init(): void {
-    // Apply initial zoom if different from 1
     if (this.initialZoom !== 1) {
       this.applyZoom(this.initialZoom, "api");
     }
@@ -102,22 +99,16 @@ export class SmoothPinchZoom {
       return;
     }
 
-    // Only add touch listeners on devices that support touch
     if (!("ontouchstart" in window)) {
       return;
     }
 
-    // Use the dedicated mobile pinch handler
     this.mobilePinchHandler = new MobilePinchHandler(document, {
       onPinchStart: () => {
         this.isPinching = true;
         this.baseZoom = this.currentZoom;
       },
-      onPinchChange: (
-        scaleChange: number,
-        centerX: number,
-        centerY: number
-      ) => {
+      onPinchChange: (scaleChange: number) => {
         const newZoom = this.clampZoom(this.baseZoom * scaleChange);
         this.applyZoom(newZoom, "pinch");
       },
@@ -135,7 +126,6 @@ export class SmoothPinchZoom {
       if (e.ctrlKey) {
         e.preventDefault();
 
-        // Fine precision: wheelIncrement per scroll unit
         const zoomIncrement =
           e.deltaY > 0 ? -this.wheelIncrement : this.wheelIncrement;
         const newZoom = this.clampZoom(this.currentZoom + zoomIncrement);
@@ -164,12 +154,10 @@ export class SmoothPinchZoom {
 
     const percentage = zoomLevel * 100;
 
-    // Trigger callback
     if (this.onZoomChange) {
       this.onZoomChange(zoomLevel, percentage);
     }
 
-    // Dispatch custom event
     window.dispatchEvent(
       new CustomEvent("smoothZoomChange", {
         detail: {
@@ -182,17 +170,15 @@ export class SmoothPinchZoom {
   }
 
   private applyDefaultZoom(zoomLevel: number): void {
-    // Check if zoom is close enough to 100% to consider it as default state
-    const isZoom100 = Math.abs(zoomLevel - 1) < 0.001; // 0.1% tolerance
+    const isZoom100 = Math.abs(zoomLevel - 1) < 0.001;
 
-    // Update CSS custom property for responsive spacing
     document.documentElement.style.setProperty("--zoom", zoomLevel.toString());
 
     if (isZoom100) {
-      // Reset to default state - remove all zoom styles for maximum performance
       if (this.supportsCSSZoom) {
         document.documentElement.style.removeProperty("zoom");
       } else {
+        document.body.style.removeProperty("willChange");
         document.body.style.removeProperty("transform");
         document.body.style.removeProperty("height");
         document.body.style.removeProperty("width");
@@ -201,6 +187,7 @@ export class SmoothPinchZoom {
       if (this.supportsCSSZoom) {
         document.documentElement.style.zoom = zoomLevel.toString();
       } else {
+        document.body.style.willChange = "transform";
         document.body.style.transform = `scale(${zoomLevel})`;
         const inverseZoom = 1 / zoomLevel;
         document.body.style.width = `${100 * inverseZoom}%`;
@@ -208,7 +195,6 @@ export class SmoothPinchZoom {
       }
     }
 
-    // Dispatch event after zoom has been applied to DOM
     window.dispatchEvent(
       new CustomEvent("smoothZoomApplied", {
         detail: {
@@ -230,9 +216,6 @@ export class SmoothPinchZoom {
     }
   }
 
-  // Public API methods
-
-  /** Set zoom to specific percentage (e.g., 150.5 for 150.5%) */
   public setZoom(percentage: number): void {
     const zoomLevel = percentage / 100;
     const clampedZoom = this.clampZoom(zoomLevel);
@@ -240,7 +223,6 @@ export class SmoothPinchZoom {
     this.applyZoom(clampedZoom, "api");
   }
 
-  /** Get current zoom percentage */
   public getZoom(): number {
     return this.currentZoom * 100;
   }
@@ -253,28 +235,23 @@ export class SmoothPinchZoom {
     return this.maxZoom;
   }
 
-  /** Reset zoom to initial scale (from viewport or 100%) */
   public resetZoom(): void {
     const resetPercentage = this.initialZoom * 100;
     this.setZoom(resetPercentage);
   }
 
-  /** Zoom in by specified percentage (default: 10%) */
   public zoomIn(increment: number = 10): void {
     this.setZoom(this.getZoom() + increment);
   }
 
-  /** Zoom out by specified percentage (default: 10%) */
   public zoomOut(increment: number = 10): void {
     this.setZoom(this.getZoom() - increment);
   }
 
-  /** Get parsed viewport meta values */
   public getViewportValues(): ViewportValues {
     return { ...this.viewportValues };
   }
 
-  /** Update viewport constraints dynamically */
   public updateViewportConstraints(options: {
     minZoom?: number;
     maxZoom?: number;
@@ -290,14 +267,12 @@ export class SmoothPinchZoom {
       this.initialZoom = options.initialZoom;
     }
 
-    // Re-clamp current zoom with new constraints
     const clampedZoom = this.clampZoom(this.currentZoom);
     if (clampedZoom !== this.currentZoom) {
       this.setZoom(clampedZoom * 100);
     }
   }
 
-  /** Re-read viewport meta tag and update constraints */
   public refreshViewportMeta(): void {
     if (!this.autoReadViewport) {
       return;
@@ -306,7 +281,6 @@ export class SmoothPinchZoom {
     const newValues = ViewportParser.parseViewportMeta();
     this.viewportValues = newValues;
 
-    // Update constraints if viewport values are present
     if (newValues.minimumScale !== null) {
       this.minZoom = newValues.minimumScale;
     }
@@ -318,7 +292,6 @@ export class SmoothPinchZoom {
     }
   }
 
-  /** Animate zoom to target percentage with smooth easing */
   public animateZoom(
     targetPercentage: number,
     options: {
@@ -345,26 +318,21 @@ export class SmoothPinchZoom {
     });
   }
 
-  /** Cancel any ongoing zoom animation */
   public cancelAnimation(): void {
     this.animationController.cancel();
   }
 
-  /** Check if currently animating */
   public isAnimating(): boolean {
     return this.animationController.isAnimating();
   }
 
-  /** Check if browser supports the required APIs */
   public static isSupported(): boolean {
     return BrowserSupport.isSupported();
   }
 
-  /** Destroy the instance and clean up event listeners */
   public destroy(): void {
     this.isDestroyed = true;
 
-    // Destroy animation controller
     this.animationController.destroy();
 
     if (this.wheelListener) {
@@ -378,17 +346,14 @@ export class SmoothPinchZoom {
       );
     }
 
-    // Clean up mobile pinch handler
     if (this.mobilePinchHandler) {
       this.mobilePinchHandler.destroy();
     }
 
-    // Reset zoom to initial
     this.resetZoom();
   }
 }
 
-// Convenience function for quick setup
 export function enableSmoothPinchZoom(
   options?: SmoothPinchZoomOptions
 ): SmoothPinchZoom {
@@ -401,5 +366,12 @@ export function enableSmoothPinchZoom(
   return new SmoothPinchZoom(options);
 }
 
-// Default export
 export default SmoothPinchZoom;
+
+export type {
+  SmoothPinchZoomOptions,
+  ViewportValues,
+  ZoomEvent,
+} from "./types/types";
+
+export type { EasingType } from "./types/animationTypes";

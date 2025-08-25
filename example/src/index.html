@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -7,7 +7,8 @@
       content="width=device-width, initial-scale=1, maximum-scale=2.5, user-scalable=yes"
     />
     <title>Smooth Pinch Zoom Demo</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="scss/styles.scss" />
+    <script type="module" src="index.ts"></script>
   </head>
   <body>
     <div class="container">
@@ -172,11 +173,5 @@
         </div>
       </div>
     </div>
-
-    <!-- Include the library (in production, use npm install) -->
-    <script src="../dist/index.js"></script>
-
-    <!-- Include our custom script after the library -->
-    <script src="script.js"></script>
   </body>
 </html>

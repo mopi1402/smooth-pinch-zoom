@@ -1,11 +1,15 @@
 import typescript from "@rollup/plugin-typescript";
 import { dts } from "rollup-plugin-dts";
 import terser from "@rollup/plugin-terser";
+import { resolve, dirname } from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export default [
-  // UMD build for browsers (single file) - MINIFIED
   {
-    input: "src/index.ts",
+    input: resolve(__dirname, "src/index.ts"),
     output: {
       file: "dist/index.js",
       format: "umd",
@@ -21,24 +25,58 @@ export default [
       }),
       terser({
         compress: {
-          drop_console: true, // Supprime console.log
-          drop_debugger: true, // Supprime debugger
-          pure_funcs: ["console.log"], // Supprime les appels console
-          passes: 2, // Plus de passes d'optimisation
+          drop_console: true,
+          drop_debugger: true,
+          pure_funcs: ["console.log", "console.warn", "console.error"],
         },
         mangle: {
-          toplevel: true, // Mangle les noms de variables globales
+          toplevel: true,
         },
         format: {
-          comments: false, // Supprime tous les commentaires
+          comments: false,
         },
+        ecma: 2020,
+        module: true,
+        toplevel: true,
+      }),
+    ],
+  },
+
+  {
+    input: resolve(__dirname, "src/index.ts"),
+    output: {
+      file: "dist/index.esm.js",
+      format: "es",
+      sourcemap: false,
+    },
+    plugins: [
+      typescript({
+        tsconfig: "./tsconfig.json",
+        declaration: false,
+        declarationMap: false,
+      }),
+      terser({
+        compress: {
+          drop_console: true,
+          drop_debugger: true,
+          pure_funcs: ["console.log", "console.warn", "console.error"],
+        },
+        mangle: {
+          toplevel: true,
+        },
+        format: {
+          comments: false,
+        },
+        ecma: 2020,
+        module: true,
+        toplevel: true,
       }),
     ],
   },
 
   // TypeScript declarations only
   {
-    input: "src/index.ts",
+    input: resolve(__dirname, "src/index.ts"),
     output: {
       file: "dist/index.d.ts",
       format: "es",

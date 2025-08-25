@@ -7,19 +7,12 @@
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "src/scss"
   ],
   "scripts": {
     "build": "rollup -c",
-    "dev": "rollup -c -w",
-    "test": "jest",
-    "serve": "live-server --port=8000 --open=/example/",
-    "start": "npm run build && npm run serve",
-    "dev-serve": "npm run dev & npm run serve",
-    "prepublishOnly": "npm run build",
-    "build:demo": "npm run build && cp -r dist example/",
-    "deploy": "npm run build:demo && vercel --prod",
-    "deploy:preview": "npm run build:demo && vercel"
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "zoom",
@@ -30,23 +23,19 @@
     "accessibility",
     "browser"
   ],
-  "author": "Your Name",
+  "author": "Pierre Moati",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/smooth-pinch-zoom.git"
+    "url": "https://github.com/mopi1402/smooth-pinch-zoom.git"
   },
   "devDependencies": {
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.5",
-    "jest": "^29.7.0",
-    "live-server": "^1.2.2",
     "rollup": "^4.9.6",
-    "rollup-plugin-analyzer": "^4.0.0",
     "rollup-plugin-dts": "^6.2.3",
     "tslib": "^2.6.2",
-    "typescript": "^5.3.3",
-    "vercel": "^33.5.1"
+    "typescript": "^5.3.3"
   },
   "browserslist": [
     "> 1%",

@@ -1,8 +1,15 @@
 # 🎯 Smooth Pinch Zoom
 
+[![npm version](https://img.shields.io/npm/v/smooth-pinch-zoom)](https://www.npmjs.com/package/smooth-pinch-zoom)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/mopi1402/smooth-pinch-zoom/ci.yml)](https://github.com/mopi1402/smooth-pinch-zoom/actions)
+[![Bundle size](https://img.shields.io/bundlephobia/min/smooth-pinch-zoom)](https://bundlephobia.com/result?p=smooth-pinch-zoom)
+[![License](https://img.shields.io/npm/l/smooth-pinch-zoom)](LICENSE)
+
 Transform pinch-to-zoom gestures into smooth, precise page-level zoom with **continuous granularity**.
 
 Unlike browser zoom that jumps between fixed levels (100%, 125%, 150%), this library provides **surgical precision** - zoom to exactly 137%, 63%, or any percentage you want!
+
+**Replaces the magnifying glass effect** with clean, coherent page-level zoom that keeps your interface usable at any zoom level.
 
 ## ✨ Features
 
@@ -14,6 +21,15 @@ Unlike browser zoom that jumps between fixed levels (100%, 125%, 150%), this lib
 - 🎛️ **Highly configurable**: Custom zoom ranges, callbacks, and behaviors
 - 🧹 **Memory safe**: Proper cleanup and event listener management
 
+## ♿ Accessibility
+
+This library is **fully accessible** and preserves all native browser accessibility features:
+
+- ✅ **Screen readers**: Works seamlessly with assistive technologies
+- ✅ **Keyboard navigation**: Ctrl+/- shortcuts remain functional
+- ✅ **Zoom preferences**: Respects user's browser zoom settings
+- ✅ **WCAG compliant**: Meets accessibility standards
+
 ## 📦 Installation
 
 ```bash
@@ -22,7 +38,9 @@ npm install smooth-pinch-zoom
 
 ## 🚀 Quick Start
 
-### ES Modules (Recommended)
+### 1. Choose Your Import Method
+
+- ES Modules (Recommended)
 
 ```javascript
 import { enableSmoothPinchZoom } from "smooth-pinch-zoom";
@@ -36,18 +54,7 @@ window.addEventListener("smoothZoomChange", (e) => {
 });
 ```
 
-### CommonJS
-
-```javascript
-const { enableSmoothPinchZoom } = require("smooth-pinch-zoom");
-
-const zoom = enableSmoothPinchZoom({
-  minZoom: 0.5, // 50%
-  maxZoom: 3.0, // 300%
-});
-```
-
-### UMD (Browser)
+- UMD (Browser)
 
 ```html
 <script src="https://unpkg.com/smooth-pinch-zoom/dist/index.umd.js"></script>
@@ -56,43 +63,114 @@ const zoom = enableSmoothPinchZoom({
 </script>
 ```
 
-## 🎛️ Advanced Configuration
+### 2. CSS Setup
+
+**Important**: You must declare the CSS variable `--zoom` in your CSS:
+
+```css
+:root {
+  --zoom: 1;
+}
+```
+
+This variable will be automatically updated by the library to reflect the current zoom level.
+
+## 🚀 Basic Examples
+
+### Simple Implementation
 
 ```javascript
-import SmoothPinchZoom from "smooth-pinch-zoom";
+import { enableSmoothPinchZoom } from "smooth-pinch-zoom";
 
-const zoom = new SmoothPinchZoom({
-  // Zoom range
-  minZoom: 0.25, // 25% minimum
-  maxZoom: 5.0, // 500% maximum
+// Basic usage with defaults
+const zoom = enableSmoothPinchZoom();
 
-  // Precision
-  wheelIncrement: 0.005, // 0.5% per wheel scroll (finer control)
+// Listen to zoom changes
+window.addEventListener("smoothZoomChange", (e) => {
+  console.log(`Zoom: ${e.detail.percentage}%`);
+});
+```
 
-  // Features
-  enablePinchZoom: true, // Touch/trackpad pinch
-  enableWheelZoom: true, // Ctrl + scroll wheel
-  useExperimentalCssZoom: false, // CSS zoom (may cause rendering delays)
+### Custom Zoom Range
 
-  // Callbacks
+```javascript
+const zoom = enableSmoothPinchZoom({
+  minZoom: 0.5, // 50% minimum
+  maxZoom: 3.0, // 300% maximum
+  wheelIncrement: 0.01, // 1% per scroll
+});
+```
+
+### With Callbacks
+
+```javascript
+const zoom = enableSmoothPinchZoom({
   onZoomChange: (zoomLevel, percentage) => {
     console.log(`Zoomed to ${percentage}%`);
-    updateUI(percentage);
-  },
-
-  // Custom zoom implementation
-  customZoomApplicator: (zoomLevel) => {
-    // Apply zoom to specific element instead of whole page
-    document.getElementById("map").style.zoom = zoomLevel;
+    updateZoomIndicator(percentage);
   },
 });
 ```
 
-## 🎮 API Reference
+## 🎯 Next Steps
 
-### Class: `SmoothPinchZoom`
+Now that you have the basics, you can:
 
-#### Constructor Options
+1. **Customize zoom ranges** - Adjust `minZoom` and `maxZoom`
+2. **Add callbacks** - Use `onZoomChange` to update your UI
+3. **Explore advanced options** - See the full configuration below
+4. **Check the demo** - Try the interactive examples
+
+## 🎛️ Advanced Configuration
+
+### Configuration Priority
+
+The library follows this priority order for configuration:
+
+1. **Library Configuration** (highest priority) - Options passed to `SmoothPinchZoom()`
+2. **Viewport Meta Tag** - `user-scalable=no` to disable browser zoom
+3. **Default Values** (lowest priority) - Built-in fallbacks
+
+## 🎨 SCSS Utilities
+
+### `zoom-clamp()` Function
+
+The library provides a SCSS utility function to create `clamp()` values with automatic zoom management:
+
+```scss
+@use "smooth-pinch-zoom/scss" as *;
+
+.my-element {
+  padding: zoom-clamp(0.5rem, 1.5rem, 1.5rem, 2);
+  margin: zoom-clamp(0.25rem, 1rem, 1rem);
+  gap: zoom-clamp(0.125rem, 0.5rem, 0.5rem, 3);
+}
+```
+
+**Parameters:**
+
+- `$min`: Minimum value (e.g., `0.25rem`)
+- `$preferred`: Preferred value (e.g., `1rem`)
+- `$max`: Maximum value (e.g., `1rem`)
+- `$pow`: Zoom power (optional, default: 1, max: 5)
+
+**Generation examples:**
+
+```scss
+// Power 1 (default)
+zoom-clamp(0.25rem, 1rem, 1rem)
+// → clamp(0.25rem, calc(1rem / (var(--zoom))), 1rem)
+
+// Power 2
+zoom-clamp(0.25rem, 1rem, 1rem, 2)
+// → clamp(0.25rem, calc(1rem / (var(--zoom) * var(--zoom))), 1rem)
+
+// Power 3
+zoom-clamp(0.125rem, 1.5rem, 1.5rem, 3)
+// → clamp(0.125rem, calc(1.5rem / (var(--zoom) * var(--zoom) * var(--zoom))), 1.5rem)
+```
+
+### Constructor Options
 
 | Option                      | Type     | Default | Description                     |
 | --------------------------- | -------- | ------- | ------------------------------- |
@@ -105,7 +183,7 @@ const zoom = new SmoothPinchZoom({
 | `onZoomChange`              | function | -       | Callback for zoom changes       |
 | `customZoomApplicator`      | function | -       | Custom zoom implementation      |
 
-#### Methods
+### All Methods
 
 ```javascript
 // Programmatic control
@@ -134,7 +212,7 @@ window.addEventListener("smoothZoomChange", (event) => {
 });
 ```
 
-## 🎯 Use Cases
+## 🎯 Common Use Cases
 
 ### Interactive Maps
 
@@ -177,6 +255,18 @@ enableSmoothPinchZoom({
     document.querySelector(".zoom-level").textContent = `${percent}%`;
   },
 });
+```
+
+## 📚 API Reference
+
+### Quick Methods
+
+```javascript
+// Essential methods you'll use most
+zoom.setZoom(137); // Set to exactly 137%
+zoom.getZoom(); // Get current zoom percentage
+zoom.resetZoom(); // Reset to 100%
+zoom.destroy(); // Clean up and reset
 ```
 
 ## 🔧 Browser Support
@@ -257,30 +347,10 @@ const zoom = new SmoothPinchZoom({
 - **Smooth animations**: 60fps rendering guaranteed
 - **Cross-browser consistency**: Same behavior everywhere
 
-## 📱 Mobile Considerations
-
-Add this meta tag to prevent default pinch behavior:
-
-```html
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1, user-scalable=no"
-/>
-```
-
-Or use CSS:
-
-```css
-html {
-  touch-action: manipulation;
-}
-```
-
 ## 🐛 Troubleshooting
 
 **Pinch gestures not working?**
 
-- Ensure `user-scalable=no` in viewport meta tag
 - Check that VisualViewport API is supported
 
 **Zoom too sensitive?**
@@ -299,9 +369,25 @@ html {
 - **Solution**: Keep `useExperimentalCssZoom: false` (default)
 - The library automatically uses `transform: scale()` for optimal performance
 
+## 🎮 Demo
+
+Try the live demo to see smooth-pinch-zoom in action:
+
+🌐 **[Live Demo](https://smooth-pinch-zoom-demo.vercel.app/)** - Test all features online!
+
+Or run the demo locally:
+
+```bash
+cd example
+npm install
+npm start
+```
+
+The demo showcases all features with interactive examples and responsive design.
+
 ## 🚀 Contributing
 
-Contributions welcome! Please check the [GitHub repository](https://github.com/yourusername/smooth-pinch-zoom).
+Contributions welcome! Please check the [GitHub repository](https://github.com/mopi1402/smooth-pinch-zoom).
 
 ## 📄 License
 

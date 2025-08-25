@@ -5,8 +5,14 @@ yarn-debug.log*
 yarn-error.log*
 
 # Build outputs
-dist/
 build/
+
+# TypeScript compiled files
+src/**/*.js
+src/**/*.js.map
+src/**/*.ts.map
+src/**/*.d.ts
+!src/types/global.d.ts
 
 # IDE/Editor files
 .vscode/
