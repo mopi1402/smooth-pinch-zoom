@@ -1,4 +1,28 @@
+import { EasingType } from "./animationTypes";
+
 export type ZoomSource = "pinch" | "wheel" | "api";
+
+export enum ZoomEvents {
+  ZOOM_CHANGE = "smoothZoomChange",
+  ZOOM_APPLIED = "smoothZoomApplied",
+}
+
+export interface ZoomAnimationOptions {
+  duration?: number;
+  easing?: EasingType;
+  onComplete?: () => void;
+}
+export interface SmoothPinchZoomControls {
+  zoomIn: (increment?: number) => void;
+  zoomOut: (increment?: number) => void;
+  resetZoom: () => void;
+  getZoom: () => number;
+  getMinZoom: () => number;
+  animateZoom(
+    targetPercentage: number,
+    options: ZoomAnimationOptions
+  ): Promise<void>;
+}
 
 export interface SmoothPinchZoomOptions {
   minZoom?: number;
@@ -9,6 +33,7 @@ export interface SmoothPinchZoomOptions {
   onZoomChange?: (zoomLevel: number, percentage: number) => void;
   enableWheelZoom?: boolean;
   enablePinchZoom?: boolean;
+  enableZoomControl?: boolean;
   autoReadViewport?: boolean;
   useExperimentalCssZoom?: boolean;
   shouldAllowZoom?: (source: ZoomSource, target?: EventTarget) => boolean;

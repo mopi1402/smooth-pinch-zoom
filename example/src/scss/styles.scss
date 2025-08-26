@@ -13,7 +13,7 @@ body {
   font-family:
     -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   margin: 0;
-  padding: zoom-clamp(0.25rem, 1.25rem, 1.25rem, 2);
+  padding: z-clamp(0.25rem, 1.25rem, 1.25rem, 2);
   background: linear-gradient(135deg, $primary-blue 0%, $primary-purple 100%)
     no-repeat fixed 100% 100%;
   min-height: 100vh;
@@ -27,7 +27,7 @@ body {
 
 .header {
   text-align: center;
-  margin-bottom: zoom-clamp(0.25rem, 2rem, 2rem, 3);
+  margin-bottom: z-clamp(0.25rem, 2rem, 2rem, 3);
 }
 
 .header h1 {
@@ -38,64 +38,64 @@ body {
 
 .zoom-controls {
   background: $overlay-medium;
-  padding: zoom-clamp(0.125rem, 1.5rem, 1.5rem, 3);
+  padding: z-clamp(0.125rem, 1.5rem, 1.5rem, 3);
   border-radius: 12px;
-  margin-bottom: zoom-clamp(0.125rem, 2rem, 2rem, 2);
+  margin-bottom: z-clamp(0.125rem, 2rem, 2rem, 2);
   backdrop-filter: blur(10px);
   border: 1px solid $overlay-darker;
+
+  button {
+    padding: z-clamp(0.25rem, 0.75rem, 0.75rem, 2)
+      z-clamp(0.5rem, 1.5rem, 1.5rem, 2);
+    border: none;
+    border-radius: 8px;
+    background: $overlay-darker;
+    color: $white;
+    font-weight: bold;
+    cursor: pointer;
+    border: 1px solid $overlay-darkest;
+  }
+
+  button:hover {
+    background: $overlay-darkest;
+    transform: translateY(-2px);
+  }
+
+  button:active {
+    transform: translateY(0);
+  }
 }
 
 .zoom-display {
   font-size: 2rem;
   font-weight: bold;
   text-align: center;
-  margin-bottom: zoom-clamp(0.25rem, 1rem, 1rem, 2);
+  margin-bottom: z-clamp(0.25rem, 1rem, 1rem, 2);
   text-shadow: 0 2px 4px $shadow-dark;
 }
 
 .button-group {
   display: flex;
-  gap: zoom-clamp(0.25rem, 1rem, 1rem, 2);
+  gap: z-clamp(0.25rem, 1rem, 1rem, 2);
   justify-content: center;
   flex-wrap: wrap;
-  margin-bottom: zoom-clamp(0.25rem, 1rem, 1rem, 2);
-}
-
-button {
-  padding: zoom-clamp(0.25rem, 0.75rem, 0.75rem, 2)
-    zoom-clamp(0.5rem, 1.5rem, 1.5rem, 2);
-  border: none;
-  border-radius: 8px;
-  background: $overlay-darker;
-  color: $white;
-  font-weight: bold;
-  cursor: pointer;
-  border: 1px solid $overlay-darkest;
-}
-
-button:hover {
-  background: $overlay-darkest;
-  transform: translateY(-2px);
-}
-
-button:active {
-  transform: translateY(0);
+  margin-bottom: z-clamp(0.25rem, 1rem, 1rem, 2);
 }
 
 .zoom-input {
   display: flex;
-  gap: zoom-clamp(0.125rem, 0.5rem, 0.5rem, 2);
+  gap: z-clamp(0.125rem, 0.5rem, 0.5rem, 2);
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  margin-bottom: zoom-clamp(0.25rem, 1rem, 1rem, 2);
+  margin-bottom: z-clamp(0.25rem, 1rem, 1rem, 2);
 }
 
 .animation-card {
   background: $overlay-light;
   border-radius: 12px;
-  padding: zoom-clamp(0.5rem, 1.5rem, 1.5rem, 2);
-  margin-bottom: zoom-clamp(0.25rem, 1rem, 1rem, 2);
+  padding: z-clamp(0.5rem, 1.5rem, 1.5rem, 2);
+  margin-bottom: z-clamp(0.25rem, 1rem, 1rem, 2);
   backdrop-filter: blur(10px);
   border: 1px solid $overlay-dark;
   box-shadow: 0 4px 20px $shadow-light;
@@ -103,7 +103,7 @@ button:active {
 
 .animation-header {
   text-align: center;
-  margin-bottom: zoom-clamp(0.5rem, 1.5rem, 1.5rem, 2);
+  margin-bottom: z-clamp(0.5rem, 1.5rem, 1.5rem, 2);
 }
 
 .animation-header h3 {
@@ -117,7 +117,7 @@ button:active {
 .animation-content {
   display: flex;
   flex-direction: column;
-  gap: zoom-clamp(0.5rem, 1.5rem, 1.5rem, 2);
+  gap: z-clamp(0.5rem, 1.5rem, 1.5rem, 2);
 }
 
 .animation-toggle {
@@ -128,7 +128,7 @@ button:active {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: zoom-clamp(0.25rem, 0.75rem, 0.75rem, 2);
+  gap: z-clamp(0.25rem, 0.75rem, 0.75rem, 2);
   cursor: pointer;
   font-size: 1rem;
   opacity: 0.9;
@@ -157,7 +157,7 @@ button:active {
 .setting-group {
   display: flex;
   flex-direction: column;
-  gap: zoom-clamp(0.125rem, 0.5rem, 0.5rem, 2);
+  gap: z-clamp(0.125rem, 0.5rem, 0.5rem, 2);
   align-items: center;
 }
 
@@ -194,7 +194,7 @@ button:active {
 .duration-input {
   display: flex;
   align-items: center;
-  gap: zoom-clamp(0.125rem, 0.5rem, 0.5rem, 2);
+  gap: z-clamp(0.125rem, 0.5rem, 0.5rem, 2);
 }
 
 .duration-input input[type='number'] {
@@ -222,7 +222,7 @@ button:active {
 .fps-input {
   display: flex;
   align-items: center;
-  gap: zoom-clamp(0.125rem, 0.5rem, 0.5rem, 2);
+  gap: z-clamp(0.125rem, 0.5rem, 0.5rem, 2);
 }
 
 .fps-input input[type='number'] {
@@ -248,7 +248,7 @@ button:active {
 }
 
 input[type='number'] {
-  padding: zoom-clamp(0.25rem, 0.5rem, 0.5rem, 2);
+  padding: z-clamp(0.25rem, 0.5rem, 0.5rem, 2);
   border-radius: 6px;
   border: 1px solid $overlay-darkest;
   background: $overlay-medium;
@@ -263,9 +263,9 @@ input[type='number']::placeholder {
 
 .demo-content {
   background: $overlay-medium;
-  padding: zoom-clamp(0.5rem, 1.5rem, 1.5rem, 2);
+  padding: z-clamp(0.5rem, 1.5rem, 1.5rem, 2);
   border-radius: 12px;
-  margin-bottom: zoom-clamp(0.5rem, 2rem, 2rem, 2);
+  margin-bottom: z-clamp(0.5rem, 2rem, 2rem, 2);
   backdrop-filter: blur(10px);
   border: 1px solid $overlay-darker;
 }
@@ -279,28 +279,28 @@ input[type='number']::placeholder {
 .demo-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
-  gap: zoom-clamp(0.25rem, 1rem, 1rem, 2);
-  margin: zoom-clamp(0.5rem, 2rem, 2rem, 2) 0;
+  gap: z-clamp(0.25rem, 1rem, 1rem, 2);
+  margin: z-clamp(0.5rem, 2rem, 2rem, 2) 0;
 }
 
 .demo-card {
   background: $overlay-medium;
-  padding: zoom-clamp(0.5rem, 1.5rem, 1.5rem, 2);
+  padding: z-clamp(0.5rem, 1.5rem, 1.5rem, 2);
   border-radius: 8px;
   border: 1px solid $overlay-darker;
   backdrop-filter: blur(5px);
 }
 
 .demo-card h3 {
-  margin: 0 0 zoom-clamp(0.25rem, 1rem, 1rem, 2) 0;
+  margin: 0 0 z-clamp(0.25rem, 1rem, 1rem, 2) 0;
   color: $white;
 }
 
 .instructions {
   background: $shadow-medium;
-  padding: zoom-clamp(0.5rem, 1.5rem, 1.5rem, 2);
+  padding: z-clamp(0.5rem, 1.5rem, 1.5rem, 2);
   border-radius: 8px;
-  margin-top: zoom-clamp(0.5rem, 2rem, 2rem, 2);
+  margin-top: z-clamp(0.5rem, 2rem, 2rem, 2);
 }
 
 .instructions h3 {
@@ -309,16 +309,16 @@ input[type='number']::placeholder {
 
 .instructions ul {
   margin: 0;
-  padding-left: zoom-clamp(0.5rem, 1.5rem, 1.5rem, 2);
+  padding-left: z-clamp(0.5rem, 1.5rem, 1.5rem, 2);
 }
 
 .instructions li {
-  margin-bottom: zoom-clamp(0.125rem, 0.5rem, 0.5rem, 2);
+  margin-bottom: z-clamp(0.125rem, 0.5rem, 0.5rem, 2);
 }
 
 .status {
   text-align: center;
-  margin-top: zoom-clamp(0.25rem, 1rem, 1rem, 2);
+  margin-top: z-clamp(0.25rem, 1rem, 1rem, 2);
   font-style: italic;
   opacity: 0.8;
 }
@@ -326,8 +326,8 @@ input[type='number']::placeholder {
 .pinch-status-card {
   background: $overlay-light;
   border-radius: 12px;
-  padding: zoom-clamp(0.5rem, 1.5rem, 1.5rem, 2);
-  margin-top: zoom-clamp(0.25rem, 1rem, 1rem, 2);
+  padding: z-clamp(0.5rem, 1.5rem, 1.5rem, 2);
+  margin-top: z-clamp(0.25rem, 1rem, 1rem, 2);
   backdrop-filter: blur(10px);
   border: 1px solid $overlay-dark;
   box-shadow: 0 4px 20px $shadow-light;
@@ -371,8 +371,8 @@ input[type='number']::placeholder {
 .maplibre-card {
   background: $overlay-light;
   border-radius: 12px;
-  padding: zoom-clamp(0.5rem, 1.5rem, 1.5rem, 2);
-  margin: zoom-clamp(0.5rem, 2rem, 2rem, 2) 0;
+  padding: z-clamp(0.5rem, 1.5rem, 1.5rem, 2);
+  margin: z-clamp(0.5rem, 2rem, 2rem, 2) 0;
   backdrop-filter: blur(10px);
   border: 1px solid $overlay-dark;
   box-shadow: 0 4px 20px $shadow-light;
@@ -380,7 +380,7 @@ input[type='number']::placeholder {
 
 .maplibre-header {
   text-align: center;
-  margin-bottom: zoom-clamp(0.5rem, 1.5rem, 1.5rem, 2);
+  margin-bottom: z-clamp(0.5rem, 1.5rem, 1.5rem, 2);
 }
 
 .maplibre-header h3 {
@@ -394,7 +394,7 @@ input[type='number']::placeholder {
 .maplibre-content {
   display: flex;
   flex-direction: column;
-  gap: zoom-clamp(0.5rem, 1rem, 1rem, 2);
+  gap: z-clamp(0.5rem, 1rem, 1rem, 2);
 }
 
 .map-container {
@@ -406,5 +406,5 @@ input[type='number']::placeholder {
 }
 
 .map-info p {
-  margin: zoom-clamp(0.125rem, 0.5rem, 0.5rem, 2) 0;
+  margin: z-clamp(0.125rem, 0.5rem, 0.5rem, 2) 0;
 }

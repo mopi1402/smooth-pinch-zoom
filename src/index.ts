@@ -1,4 +1,5 @@
 import type {
+  SmoothPinchZoomControls,
   SmoothPinchZoomOptions,
   ViewportValues,
   ZoomEvent,
@@ -12,9 +13,11 @@ import { ViewportParser } from "./utils/viewportParser";
 import { BrowserSupport } from "./utils/browserSupport";
 import { TouchGestureHandler } from "./utils/gestures/touchHandler";
 import { WheelGestureHandler } from "./utils/gestures/wheelHandler";
+import { ZoomControlController } from "./ui/zoomControlController";
 import { EasingType } from "./types/animationTypes";
+import { ZoomEvents } from "./types/types";
 
-export class SmoothPinchZoom {
+export class SmoothPinchZoom implements SmoothPinchZoomControls {
   private currentZoom = 1;
   private minZoom: number;
   private maxZoom: number;
@@ -24,6 +27,7 @@ export class SmoothPinchZoom {
   private onZoomChange?: (zoomLevel: number, percentage: number) => void;
   private enableWheelZoom: boolean;
   private enablePinchZoom: boolean;
+  private enableZoomControl: boolean;
   private autoReadViewport: boolean;
   private useExperimentalCssZoom: boolean;
   private shouldAllowZoom?: (
@@ -35,6 +39,7 @@ export class SmoothPinchZoom {
   private wheelListener?: (e: WheelEvent) => void;
   private wheelGestureHandler?: WheelGestureHandler;
   private touchGestureHandler?: TouchGestureHandler;
+  private zoomControlController?: ZoomControlController;
   private visualViewportListener?: () => void;
   private isDestroyed = false;
   private isWheeling = false;
@@ -43,8 +48,6 @@ export class SmoothPinchZoom {
   private supportsCSSZoom: boolean;
 
   constructor(options: SmoothPinchZoomOptions = {}) {
-    console.log("🟢 SmoothPinchZoom constructor");
-
     this.autoReadViewport =
       options.autoReadViewport ?? DEFAULT_CONFIG.autoReadViewport;
     this.viewportValues = this.autoReadViewport
@@ -73,11 +76,18 @@ export class SmoothPinchZoom {
       options.enableWheelZoom ?? DEFAULT_CONFIG.enableWheelZoom;
     this.enablePinchZoom =
       options.enablePinchZoom ?? DEFAULT_CONFIG.enablePinchZoom;
+    this.enableZoomControl = options.enableZoomControl ?? true;
     this.useExperimentalCssZoom =
       options.useExperimentalCssZoom ?? DEFAULT_CONFIG.useExperimentalCssZoom;
     this.shouldAllowZoom = options.shouldAllowZoom;
 
     this.animationController = new AnimationController();
+
+    if (this.enableZoomControl !== false) {
+      this.zoomControlController = new ZoomControlController(this, {
+        delay: 3000,
+      });
+    }
 
     this.supportsCSSZoom =
       this.useExperimentalCssZoom && BrowserSupport.hasCSSZoom();
@@ -196,7 +206,7 @@ export class SmoothPinchZoom {
     }
 
     window.dispatchEvent(
-      new CustomEvent("smoothZoomChange", {
+      new CustomEvent(ZoomEvents.ZOOM_CHANGE, {
         detail: {
           zoomLevel,
           percentage,
@@ -233,7 +243,7 @@ export class SmoothPinchZoom {
     }
 
     window.dispatchEvent(
-      new CustomEvent("smoothZoomApplied", {
+      new CustomEvent(ZoomEvents.ZOOM_APPLIED, {
         detail: {
           zoomLevel,
           percentage: zoomLevel * 100,
@@ -395,6 +405,10 @@ export class SmoothPinchZoom {
       this.wheelGestureHandler.destroy();
     }
 
+    if (this.zoomControlController) {
+      this.zoomControlController.destroy();
+    }
+
     this.resetZoom();
   }
 }
@@ -419,5 +433,7 @@ export type {
   ZoomEvent,
   ZoomSource,
 } from "./types/types";
+
+export { ZoomEvents } from "./types/types";
 
 export type { EasingType } from "./types/animationTypes";

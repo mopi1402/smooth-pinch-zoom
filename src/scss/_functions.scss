@@ -1,6 +1,6 @@
 @function z-clamp($min, $preferred, $max, $pow: 1) {
   @if $pow > 5 {
-    @error "zoom-clamp: $pow cannot exceed 5 (got #{$pow})";
+    @error "z-clamp: $pow cannot exceed 5 (got #{$pow})";
   }
   $zoom-string: "";
   @for $i from 1 through $pow {

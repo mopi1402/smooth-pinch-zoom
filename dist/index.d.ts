@@ -1,4 +1,23 @@
+type EasingType = "linear" | "easeInOut" | "easeOut" | "easeIn" | "spring" | "bounce" | "elastic" | "back";
+
 type ZoomSource = "pinch" | "wheel" | "api";
+declare enum ZoomEvents {
+    ZOOM_CHANGE = "smoothZoomChange",
+    ZOOM_APPLIED = "smoothZoomApplied"
+}
+interface ZoomAnimationOptions {
+    duration?: number;
+    easing?: EasingType;
+    onComplete?: () => void;
+}
+interface SmoothPinchZoomControls {
+    zoomIn: (increment?: number) => void;
+    zoomOut: (increment?: number) => void;
+    resetZoom: () => void;
+    getZoom: () => number;
+    getMinZoom: () => number;
+    animateZoom(targetPercentage: number, options: ZoomAnimationOptions): Promise<void>;
+}
 interface SmoothPinchZoomOptions {
     minZoom?: number;
     maxZoom?: number;
@@ -8,6 +27,7 @@ interface SmoothPinchZoomOptions {
     onZoomChange?: (zoomLevel: number, percentage: number) => void;
     enableWheelZoom?: boolean;
     enablePinchZoom?: boolean;
+    enableZoomControl?: boolean;
     autoReadViewport?: boolean;
     useExperimentalCssZoom?: boolean;
     shouldAllowZoom?: (source: ZoomSource, target?: EventTarget) => boolean;
@@ -24,9 +44,7 @@ interface ViewportValues {
     userScalable: boolean;
 }
 
-type EasingType = "linear" | "easeInOut" | "easeOut" | "easeIn" | "spring" | "bounce" | "elastic" | "back";
-
-declare class SmoothPinchZoom {
+declare class SmoothPinchZoom implements SmoothPinchZoomControls {
     private currentZoom;
     private minZoom;
     private maxZoom;
@@ -36,6 +54,7 @@ declare class SmoothPinchZoom {
     private onZoomChange?;
     private enableWheelZoom;
     private enablePinchZoom;
+    private enableZoomControl;
     private autoReadViewport;
     private useExperimentalCssZoom;
     private shouldAllowZoom?;
@@ -43,6 +62,7 @@ declare class SmoothPinchZoom {
     private wheelListener?;
     private wheelGestureHandler?;
     private touchGestureHandler?;
+    private zoomControlController?;
     private visualViewportListener?;
     private isDestroyed;
     private isWheeling;
@@ -83,5 +103,5 @@ declare class SmoothPinchZoom {
 }
 declare function enableSmoothPinchZoom(options?: SmoothPinchZoomOptions): SmoothPinchZoom;
 
-export { SmoothPinchZoom, SmoothPinchZoom as default, enableSmoothPinchZoom };
+export { SmoothPinchZoom, ZoomEvents, SmoothPinchZoom as default, enableSmoothPinchZoom };
 export type { EasingType, SmoothPinchZoomOptions, ViewportValues, ZoomEvent, ZoomSource };

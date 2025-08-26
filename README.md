@@ -182,6 +182,7 @@ The library provides SCSS utility functions for automatic zoom management:
 | `wheelIncrement`            | number   | 0.01    | Zoom step for wheel scroll (1%)       |
 | `enablePinchZoom`           | boolean  | true    | Enable touch/trackpad pinch           |
 | `enableWheelZoom`           | boolean  | true    | Enable Ctrl+wheel zoom                |
+| `enableZoomControl`         | boolean  | true    | Enable zoom control UI component      |
 | `useExperimentalCssZoom` ⚠️ | boolean  | false   | Enable CSS zoom (experimental)        |
 | `onZoomChange`              | function | -       | Callback for zoom changes             |
 | `shouldAllowZoom`           | function | -       | Guard to control when zoom is allowed |
