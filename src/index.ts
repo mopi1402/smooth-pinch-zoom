@@ -4,14 +4,15 @@ import type {
   ZoomEvent,
 } from "./types/types";
 import { AnimationController } from "./utils/animations/animationController";
-import { EasingType } from "./types/animationTypes";
 import {
   DEFAULT_CONFIG,
   DEFAULT_VIEWPORT_VALUES,
 } from "./config/defaultConfig";
 import { ViewportParser } from "./utils/viewportParser";
 import { BrowserSupport } from "./utils/browserSupport";
-import { MobilePinchHandler } from "./utils/MobilePinchHandler";
+import { TouchGestureHandler } from "./utils/gestures/touchHandler";
+import { WheelGestureHandler } from "./utils/gestures/wheelHandler";
+import { EasingType } from "./types/animationTypes";
 
 export class SmoothPinchZoom {
   private currentZoom = 1;
@@ -25,18 +26,25 @@ export class SmoothPinchZoom {
   private enablePinchZoom: boolean;
   private autoReadViewport: boolean;
   private useExperimentalCssZoom: boolean;
+  private shouldAllowZoom?: (
+    source: "pinch" | "wheel" | "api",
+    target?: EventTarget
+  ) => boolean;
 
-  private isPinching = false;
   private baseZoom = 1;
   private wheelListener?: (e: WheelEvent) => void;
+  private wheelGestureHandler?: WheelGestureHandler;
+  private touchGestureHandler?: TouchGestureHandler;
   private visualViewportListener?: () => void;
-  private mobilePinchHandler?: MobilePinchHandler;
   private isDestroyed = false;
+  private isWheeling = false;
   private viewportValues: ViewportValues;
   private animationController: AnimationController;
   private supportsCSSZoom: boolean;
 
   constructor(options: SmoothPinchZoomOptions = {}) {
+    console.log("🟢 SmoothPinchZoom constructor");
+
     this.autoReadViewport =
       options.autoReadViewport ?? DEFAULT_CONFIG.autoReadViewport;
     this.viewportValues = this.autoReadViewport
@@ -67,6 +75,7 @@ export class SmoothPinchZoom {
       options.enablePinchZoom ?? DEFAULT_CONFIG.enablePinchZoom;
     this.useExperimentalCssZoom =
       options.useExperimentalCssZoom ?? DEFAULT_CONFIG.useExperimentalCssZoom;
+    this.shouldAllowZoom = options.shouldAllowZoom;
 
     this.animationController = new AnimationController();
 
@@ -103,9 +112,8 @@ export class SmoothPinchZoom {
       return;
     }
 
-    this.mobilePinchHandler = new MobilePinchHandler(document, {
+    this.touchGestureHandler = new TouchGestureHandler(document, {
       onPinchStart: () => {
-        this.isPinching = true;
         this.baseZoom = this.currentZoom;
       },
       onPinchChange: (scaleChange: number) => {
@@ -113,29 +121,58 @@ export class SmoothPinchZoom {
         this.applyZoom(newZoom, "pinch");
       },
       onPinchEnd: () => {
-        this.isPinching = false;
         this.currentZoom = this.getCurrentAppliedZoom();
       },
+      shouldAllowZoom: this.shouldAllowZoom,
     });
   }
 
   private setupWheelZoom(): void {
-    this.wheelListener = (e: WheelEvent) => {
-      if (this.isDestroyed) return;
+    this.wheelGestureHandler = new WheelGestureHandler(
+      document,
+      {
+        maxLogicalDistance: 100,
+        minDelay: 200,
+        maxDelay: 300,
+      },
+      {
+        onStart: ({ startElement }) => {
+          if (this.isDestroyed) return;
 
-      if (e.ctrlKey) {
-        e.preventDefault();
+          if (
+            this.shouldAllowZoom &&
+            startElement &&
+            !this.shouldAllowZoom("wheel", startElement)
+          ) {
+            return;
+          }
 
-        const zoomIncrement =
-          e.deltaY > 0 ? -this.wheelIncrement : this.wheelIncrement;
-        const newZoom = this.clampZoom(this.currentZoom + zoomIncrement);
+          this.isWheeling = true;
+        },
 
-        this.currentZoom = newZoom;
-        this.applyZoom(newZoom, "wheel");
+        onWheel: ({ event }) => {
+          if (this.isDestroyed || !this.isWheeling) return;
+
+          if (
+            !this.shouldAllowZoom?.("wheel", event.target ?? undefined) ||
+            event.ctrlKey
+          ) {
+            event.preventDefault();
+
+            const zoomIncrement =
+              event.deltaY > 0 ? -this.wheelIncrement : this.wheelIncrement;
+            const newZoom = this.clampZoom(this.currentZoom + zoomIncrement);
+
+            this.currentZoom = newZoom;
+            this.applyZoom(newZoom, "wheel");
+          }
+        },
+
+        onEnd: () => {
+          this.isWheeling = false;
+        },
       }
-    };
-
-    document.addEventListener("wheel", this.wheelListener, { passive: false });
+    );
   }
 
   private clampZoom(zoomLevel: number): number {
@@ -217,6 +254,10 @@ export class SmoothPinchZoom {
   }
 
   public setZoom(percentage: number): void {
+    if (this.shouldAllowZoom && !this.shouldAllowZoom("api", undefined)) {
+      return;
+    }
+
     const zoomLevel = percentage / 100;
     const clampedZoom = this.clampZoom(zoomLevel);
     this.currentZoom = clampedZoom;
@@ -346,8 +387,12 @@ export class SmoothPinchZoom {
       );
     }
 
-    if (this.mobilePinchHandler) {
-      this.mobilePinchHandler.destroy();
+    if (this.touchGestureHandler) {
+      this.touchGestureHandler.destroy();
+    }
+
+    if (this.wheelGestureHandler) {
+      this.wheelGestureHandler.destroy();
     }
 
     this.resetZoom();
@@ -372,6 +417,7 @@ export type {
   SmoothPinchZoomOptions,
   ViewportValues,
   ZoomEvent,
+  ZoomSource,
 } from "./types/types";
 
 export type { EasingType } from "./types/animationTypes";

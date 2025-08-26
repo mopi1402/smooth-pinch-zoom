@@ -118,6 +118,20 @@ const zoom = enableSmoothPinchZoom({
 });
 ```
 
+### With Zoom Guard
+
+```javascript
+const zoom = enableSmoothPinchZoom({
+  shouldAllowZoom: (source, target) => {
+    // Block zoom on map elements
+    if (target && target.closest(".map-container")) {
+      return false;
+    }
+    return true;
+  },
+});
+```
+
 ## 🎯 Next Steps
 
 Now that you have the basics, you can:
@@ -178,16 +192,17 @@ zoom-clamp(0.125rem, 1.5rem, 1.5rem, 3)
 
 ### Constructor Options
 
-| Option                      | Type     | Default | Description                     |
-| --------------------------- | -------- | ------- | ------------------------------- |
-| `minZoom`                   | number   | 0.25    | Minimum zoom level (25%)        |
-| `maxZoom`                   | number   | 5.0     | Maximum zoom level (500%)       |
-| `wheelIncrement`            | number   | 0.01    | Zoom step for wheel scroll (1%) |
-| `enablePinchZoom`           | boolean  | true    | Enable touch/trackpad pinch     |
-| `enableWheelZoom`           | boolean  | true    | Enable Ctrl+wheel zoom          |
-| `useExperimentalCssZoom` ⚠️ | boolean  | false   | Enable CSS zoom (experimental)  |
-| `onZoomChange`              | function | -       | Callback for zoom changes       |
-| `customZoomApplicator`      | function | -       | Custom zoom implementation      |
+| Option                      | Type     | Default | Description                           |
+| --------------------------- | -------- | ------- | ------------------------------------- |
+| `minZoom`                   | number   | 0.25    | Minimum zoom level (25%)              |
+| `maxZoom`                   | number   | 5.0     | Maximum zoom level (500%)             |
+| `wheelIncrement`            | number   | 0.01    | Zoom step for wheel scroll (1%)       |
+| `enablePinchZoom`           | boolean  | true    | Enable touch/trackpad pinch           |
+| `enableWheelZoom`           | boolean  | true    | Enable Ctrl+wheel zoom                |
+| `useExperimentalCssZoom` ⚠️ | boolean  | false   | Enable CSS zoom (experimental)        |
+| `onZoomChange`              | function | -       | Callback for zoom changes             |
+| `shouldAllowZoom`           | function | -       | Guard to control when zoom is allowed |
+| `customZoomApplicator`      | function | -       | Custom zoom implementation            |
 
 ### All Methods
 

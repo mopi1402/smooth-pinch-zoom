@@ -1,12 +1,12 @@
 # SCSS Functions
 
-Ce dossier contient les fonctions SCSS utilitaires pour la lib `smooth-pinch-zoom`.
+This folder contains the SCSS utility functions for the `smooth-pinch-zoom` library.
 
 ## zoom-clamp()
 
-Fonction utilitaire pour créer des valeurs `clamp()` avec gestion automatique du zoom.
+Utility function to create `clamp()` values with automatic zoom management.
 
-### Syntaxe
+### Syntax
 
 ```scss
 @use "smooth-pinch-zoom/scss" as *;
@@ -14,30 +14,30 @@ Fonction utilitaire pour créer des valeurs `clamp()` avec gestion automatique d
 zoom-clamp($min, $preferred, $max, $pow: 1)
 ```
 
-### Paramètres
+### Parameters
 
-- `$min` : Valeur minimale (ex: `0.25rem`)
-- `$preferred` : Valeur préférée (ex: `1rem`)
-- `$max` : Valeur maximale (ex: `1rem`)
-- `$pow` : Puissance du zoom (optionnel, par défaut: 1, max: 5)
+- `$min` : Minimum value (e.g., `0.25rem`)
+- `$preferred` : Preferred value (e.g., `1rem`)
+- `$max` : Maximum value (e.g., `1rem`)
+- `$pow` : Zoom power (optional, default: 1, max: 5)
 
-### Exemples
+### Examples
 
 ```scss
-// Puissance 1 (par défaut)
+// Power 1 (default)
 padding: zoom-clamp(0.25rem, 1rem, 1rem);
-// Génère: clamp(0.25rem, calc(1rem / (var(--zoom))), 1rem)
+// Generates: clamp(0.25rem, calc(1rem / (var(--zoom))), 1rem)
 
-// Puissance 2
+// Power 2
 padding: zoom-clamp(0.25rem, 1rem, 1rem, 2);
-// Génère: clamp(0.25rem, calc(1rem / (var(--zoom) * var(--zoom))), 1rem)
+// Generates: clamp(0.25rem, calc(1rem / (var(--zoom) * var(--zoom))), 1rem)
 
-// Puissance 3
+// Power 3
 padding: zoom-clamp(0.125rem, 1.5rem, 1.5rem, 3);
-// Génère: clamp(0.125rem, calc(1.5rem / (var(--zoom) * var(--zoom) * var(--zoom))), 1.5rem)
+// Generates: clamp(0.125rem, calc(1.5rem / (var(--zoom) * var(--zoom) * var(--zoom))), 1.5rem)
 ```
 
-### Utilisation
+### Usage
 
 ```scss
 @use "smooth-pinch-zoom/scss" as *;

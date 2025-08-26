@@ -11,9 +11,10 @@
     "type-check": "tsc --noEmit",
     "lint": "eslint src --ext ts --fix",
     "deploy": "vercel --prod",
-    "deploy:dist": "cd dist && vercel --prod"
+    "deploy:dist": "npm run build && cd dist && vercel --prod"
   },
   "dependencies": {
+    "maplibre-gl": "5.7.0",
     "smooth-pinch-zoom": "workspace:*"
   },
   "devDependencies": {

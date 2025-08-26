@@ -7,6 +7,8 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+const isProduction = process.env.NODE_ENV === "production";
+
 export default [
   {
     input: resolve(__dirname, "src/index.ts"),
@@ -23,22 +25,26 @@ export default [
         declaration: false,
         declarationMap: false,
       }),
-      terser({
-        compress: {
-          drop_console: true,
-          drop_debugger: true,
-          pure_funcs: ["console.log", "console.warn", "console.error"],
-        },
-        mangle: {
-          toplevel: true,
-        },
-        format: {
-          comments: false,
-        },
-        ecma: 2020,
-        module: true,
-        toplevel: true,
-      }),
+      ...(isProduction
+        ? [
+            terser({
+              compress: {
+                drop_console: true,
+                drop_debugger: true,
+                pure_funcs: ["console.log", "console.warn", "console.error"],
+              },
+              mangle: {
+                toplevel: true,
+              },
+              format: {
+                comments: false,
+              },
+              ecma: 2020,
+              module: true,
+              toplevel: true,
+            }),
+          ]
+        : []),
     ],
   },
 
@@ -55,26 +61,29 @@ export default [
         declaration: false,
         declarationMap: false,
       }),
-      terser({
-        compress: {
-          drop_console: true,
-          drop_debugger: true,
-          pure_funcs: ["console.log", "console.warn", "console.error"],
-        },
-        mangle: {
-          toplevel: true,
-        },
-        format: {
-          comments: false,
-        },
-        ecma: 2020,
-        module: true,
-        toplevel: true,
-      }),
+      ...(isProduction
+        ? [
+            terser({
+              compress: {
+                drop_console: true,
+                drop_debugger: true,
+                pure_funcs: ["console.log", "console.warn", "console.error"],
+              },
+              mangle: {
+                toplevel: true,
+              },
+              format: {
+                comments: false,
+              },
+              ecma: 2020,
+              module: true,
+              toplevel: true,
+            }),
+          ]
+        : []),
     ],
   },
 
-  // TypeScript declarations only
   {
     input: resolve(__dirname, "src/index.ts"),
     output: {

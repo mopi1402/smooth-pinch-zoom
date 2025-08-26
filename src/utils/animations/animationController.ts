@@ -57,13 +57,11 @@ export class AnimationController {
         options.onUpdate?.(currentValue);
 
         if (progress < 1) {
-          // Gestion du FPS constant pour un rendu fluide
           const nextFrameTime = currentTime + this.frameInterval;
           this.animationFrameId = requestAnimationFrame((timestamp) => {
             if (timestamp >= nextFrameTime) {
               animate(timestamp);
             } else {
-              // Attendre le bon moment pour le prochain frame
               setTimeout(() => {
                 this.animationFrameId = requestAnimationFrame(animate);
               }, nextFrameTime - timestamp);
@@ -74,7 +72,6 @@ export class AnimationController {
           this.currentAnimation = undefined;
           this.animationFrameId = undefined;
 
-          // Final update with exact target value
           options.onUpdate?.(targetValue);
           options.onComplete?.();
           resolve();
@@ -102,7 +99,7 @@ export class AnimationController {
   }
 
   public setTargetFPS(fps: number): void {
-    this.targetFPS = Math.max(30, Math.min(120, fps)); // Limite entre 30 et 120 FPS
+    this.targetFPS = Math.max(30, Math.min(120, fps));
     this.frameInterval = 1000 / this.targetFPS;
   }
 

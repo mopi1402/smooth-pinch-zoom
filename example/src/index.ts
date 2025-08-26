@@ -1,5 +1,6 @@
 import { SmoothPinchZoom } from 'smooth-pinch-zoom';
-import type { SmoothPinchZoomOptions } from 'smooth-pinch-zoom';
+import type { SmoothPinchZoomOptions, ZoomSource } from 'smooth-pinch-zoom';
+import maplibregl from 'maplibre-gl';
 
 let smoothZoom: SmoothPinchZoom;
 
@@ -17,6 +18,14 @@ document.addEventListener('DOMContentLoaded', function () {
     wheelIncrement: 0.02,
     onZoomChange: function (_zoomLevel: number, percentage: number) {
       updateZoomDisplay(percentage);
+    },
+    shouldAllowZoom: (_source: ZoomSource, target?: EventTarget) => {
+      if (target && target instanceof Element) {
+        if (target.closest('#map') || target.closest('.map-container')) {
+          return false;
+        }
+      }
+      return true;
     },
   };
 
@@ -37,6 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
   updateInputConstraints();
   setupFPSControl();
   updatePinchZoomStatus(100);
+  initializeMapLibre();
 });
 
 function updateZoomDisplay(percentage: number): void {
@@ -321,7 +331,43 @@ function updatePinchZoomStatus(_percentage: number): void {
   `;
 }
 
-// Expose functions globally for HTML onclick handlers
+function initializeMapLibre(): void {
+  const mapContainer = document.getElementById('map');
+  if (!mapContainer) return;
+
+  const map = new maplibregl.Map({
+    container: 'map',
+    style: {
+      version: 8,
+      sources: {
+        osm: {
+          type: 'raster',
+          tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+          tileSize: 256,
+          attribution: '© OpenStreetMap contributors',
+        },
+      },
+      layers: [
+        {
+          id: 'osm-tiles',
+          type: 'raster',
+          source: 'osm',
+          minzoom: 0,
+          maxzoom: 22,
+        },
+      ],
+    },
+    center: [2.3522, 48.8566],
+    zoom: 10,
+    attributionControl: true as any,
+  });
+
+  map.on('load', () => {
+    map.addControl(new maplibregl.NavigationControl(), 'top-right');
+    map.addControl(new maplibregl.FullscreenControl(), 'top-right');
+  });
+}
+
 (window as any).zoomIn = zoomIn;
 (window as any).zoomOut = zoomOut;
 (window as any).resetZoom = resetZoom;

@@ -8,6 +8,10 @@
     />
     <title>Smooth Pinch Zoom Demo</title>
     <link rel="stylesheet" href="scss/styles.scss" />
+    <link
+      href="https://unpkg.com/maplibre-gl@5.7.0/dist/maplibre-gl.css"
+      rel="stylesheet"
+    />
     <script type="module" src="index.ts"></script>
   </head>
   <body>
@@ -126,27 +130,49 @@
 
         <div class="demo-grid">
           <div class="demo-card">
-            <h3>Card 1</h3>
+            <h3>🎯 Continuous Precision</h3>
             <p>
-              This card will scale perfectly with the zoom level. Try zooming to
-              exactly 137% - you can't do that with browser zoom!
+              Zoom to exactly 137%, 63%, or any percentage you want! No more
+              fixed steps like 125%, 150%.
             </p>
           </div>
 
           <div class="demo-card">
-            <h3>Card 2</h3>
+            <h3>📱 Cross-Platform Support</h3>
             <p>
-              Watch how UI elements stay in perfect proportion and nothing
-              "falls off" the screen like with pinch-to-zoom.
+              Works seamlessly on desktop trackpads, mobile touch, and tablets.
+              Try pinch gestures or Ctrl+scroll!
             </p>
           </div>
 
           <div class="demo-card">
-            <h3>Card 3</h3>
+            <h3>🔍 Replace Magnifying Glass</h3>
             <p>
-              The zoom is applied at the page level, just like browser zoom, but
-              with continuous precision!
+              This smooth zoom replaces the magnifying glass effect with clean,
+              coherent page-level zoom that keeps your interface usable at any
+              zoom level.
             </p>
+          </div>
+
+          <div class="demo-card">
+            <h3>🎛️ Highly Configurable</h3>
+            <p>
+              Custom zoom ranges, callbacks, zoom guards, and behaviors. Adapt
+              to any use case with powerful configuration options.
+            </p>
+          </div>
+        </div>
+
+        <div class="maplibre-card">
+          <div class="maplibre-header">
+            <h3>🛡️ Smart Zoom Guard</h3>
+          </div>
+          <div class="maplibre-content">
+            <p>
+              The zoom automatically blocks on the MapLibre below, preventing
+              conflicts while keeping your interface usable.
+            </p>
+            <div id="map" class="map-container"></div>
           </div>
         </div>
 

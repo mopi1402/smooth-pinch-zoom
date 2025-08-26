@@ -10,6 +10,7 @@ interface SmoothPinchZoomOptions {
     enablePinchZoom?: boolean;
     autoReadViewport?: boolean;
     useExperimentalCssZoom?: boolean;
+    shouldAllowZoom?: (source: ZoomSource, target?: EventTarget) => boolean;
 }
 interface ZoomEvent {
     zoomLevel: number;
@@ -37,12 +38,14 @@ declare class SmoothPinchZoom {
     private enablePinchZoom;
     private autoReadViewport;
     private useExperimentalCssZoom;
-    private isPinching;
+    private shouldAllowZoom?;
     private baseZoom;
     private wheelListener?;
+    private wheelGestureHandler?;
+    private touchGestureHandler?;
     private visualViewportListener?;
-    private mobilePinchHandler?;
     private isDestroyed;
+    private isWheeling;
     private viewportValues;
     private animationController;
     private supportsCSSZoom;
@@ -81,4 +84,4 @@ declare class SmoothPinchZoom {
 declare function enableSmoothPinchZoom(options?: SmoothPinchZoomOptions): SmoothPinchZoom;
 
 export { SmoothPinchZoom, SmoothPinchZoom as default, enableSmoothPinchZoom };
-export type { EasingType, SmoothPinchZoomOptions, ViewportValues, ZoomEvent };
+export type { EasingType, SmoothPinchZoomOptions, ViewportValues, ZoomEvent, ZoomSource };
