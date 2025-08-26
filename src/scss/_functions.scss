@@ -1,4 +1,4 @@
-@function zoom-clamp($min, $preferred, $max, $pow: 1) {
+@function z-clamp($min, $preferred, $max, $pow: 1) {
   @if $pow > 5 {
     @error "zoom-clamp: $pow cannot exceed 5 (got #{$pow})";
   }
@@ -10,4 +10,16 @@
     }
   }
   @return clamp($min, calc($preferred / (#{$zoom-string})), $max);
+}
+
+@function z-fixed($value) {
+  @return calc($value / var(--zoom));
+}
+
+@function z-100vh($offset: 0) {
+  @return no-zoom(100vh) + $offset;
+}
+
+@function z-100vw($offset: 0) {
+  @return no-zoom(100vw) + $offset;
 }

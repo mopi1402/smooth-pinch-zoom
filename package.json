@@ -1,6 +1,6 @@
 {
   "name": "smooth-pinch-zoom",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Transform pinch-to-zoom gestures into smooth, precise page-level zoom with continuous granularity",
   "type": "module",
   "main": "dist/index.js",

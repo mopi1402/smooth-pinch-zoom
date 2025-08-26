@@ -153,42 +153,25 @@ The library follows this priority order for configuration:
 
 ## 🎨 SCSS Utilities
 
-### `zoom-clamp()` Function
+The library provides SCSS utility functions for automatic zoom management:
 
-The library provides a SCSS utility function to create `clamp()` values with automatic zoom management:
+- **`z-clamp()`** - Create responsive `clamp()` values that adapt to zoom
+- **`z-fixed()`** - Keep elements at fixed size regardless of zoom
+- **`z-100vh()`** and **`z-100vw()`** - Fullscreen dimensions that adapt to zoom
+
+**Quick example:**
 
 ```scss
 @use "smooth-pinch-zoom/scss" as *;
 
 .my-element {
-  padding: zoom-clamp(0.5rem, 1.5rem, 1.5rem, 2);
-  margin: zoom-clamp(0.25rem, 1rem, 1rem);
-  gap: zoom-clamp(0.125rem, 0.5rem, 0.5rem, 3);
+  padding: z-clamp(0.5rem, 1rem, 2rem);
+  width: z-fixed(200px);
+  height: z-100vh(-60px);
 }
 ```
 
-**Parameters:**
-
-- `$min`: Minimum value (e.g., `0.25rem`)
-- `$preferred`: Preferred value (e.g., `1rem`)
-- `$max`: Maximum value (e.g., `1rem`)
-- `$pow`: Zoom power (optional, default: 1, max: 5)
-
-**Generation examples:**
-
-```scss
-// Power 1 (default)
-zoom-clamp(0.25rem, 1rem, 1rem)
-// → clamp(0.25rem, calc(1rem / (var(--zoom))), 1rem)
-
-// Power 2
-zoom-clamp(0.25rem, 1rem, 1rem, 2)
-// → clamp(0.25rem, calc(1rem / (var(--zoom) * var(--zoom))), 1rem)
-
-// Power 3
-zoom-clamp(0.125rem, 1.5rem, 1.5rem, 3)
-// → clamp(0.125rem, calc(1.5rem / (var(--zoom) * var(--zoom) * var(--zoom))), 1.5rem)
-```
+**For detailed documentation, examples, and advanced usage, see the [SCSS README](src/scss/README.md).**
 
 ### Constructor Options
 
