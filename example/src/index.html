@@ -59,16 +59,9 @@
 
             <div class="animation-settings">
               <div class="setting-group">
-                <label>Animation Type:</label>
+                <label for="animationType">Animation Type:</label>
                 <select id="animationType">
-                  <option value="back">Back</option>
-                  <option value="easeInOut">Ease In Out</option>
-                  <option value="easeIn">Ease In</option>
-                  <option value="easeOut">Ease Out</option>
                   <option value="linear">Linear</option>
-                  <option value="spring">Spring</option>
-                  <option value="bounce">Bounce</option>
-                  <option value="elastic">Elastic</option>
                 </select>
               </div>
 
@@ -199,5 +192,27 @@
         </div>
       </div>
     </div>
+
+    <script>
+      const easingFunctions = [
+        'easeOutBack',
+        'easeOutExpo',
+        'easeInOutQuad',
+        'easeInOutCubic',
+        'linear',
+      ];
+
+      const select = document.getElementById('animationType');
+      select.innerHTML = '';
+
+      easingFunctions.forEach((easing) => {
+        const option = document.createElement('option');
+        option.value = easing;
+        option.textContent = easing
+          .replace(/([A-Z])/g, ' $1')
+          .replace(/^./, (str) => str.toUpperCase());
+        select.appendChild(option);
+      });
+    </script>
   </body>
 </html>

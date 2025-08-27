@@ -23,7 +23,7 @@ Test all features: pinch gestures, wheel zoom, animations, and custom zoom level
 - 📱 **Cross-platform**: Works on desktop trackpads, mobile touch, and tablets
 - 🖱️ **Multiple input methods**: Pinch gestures + Ctrl+scroll wheel
 - 🛡️ **Accessibility friendly**: Preserves native browser zoom (Ctrl+/-)
-- 🚀 **Zero dependencies**: Lightweight vanilla JavaScript/TypeScript
+- 🚀 **Minimal dependencies**: Only depends on Pithos (my own maintained package)
 - 🎛️ **Highly configurable**: Custom zoom ranges, callbacks, and behaviors
 - 🧹 **Memory safe**: Proper cleanup and event listener management
 

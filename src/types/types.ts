@@ -1,4 +1,4 @@
-import { EasingType } from "./animationTypes";
+import { EasingFunction } from "pithos/types/animations/easing";
 
 export type ZoomSource = "pinch" | "wheel" | "api";
 
@@ -9,7 +9,7 @@ export enum ZoomEvents {
 
 export interface ZoomAnimationOptions {
   duration?: number;
-  easing?: EasingType;
+  easing?: EasingFunction;
   onComplete?: () => void;
 }
 export interface SmoothPinchZoomControls {
@@ -24,31 +24,34 @@ export interface SmoothPinchZoomControls {
   ): Promise<void>;
 }
 
-export interface SmoothPinchZoomOptions {
-  minZoom?: number;
-  maxZoom?: number;
-  initialZoom?: number;
-  wheelIncrement?: number;
+export interface EnabledOptions {
+  enableWheelZoom: boolean;
+  enablePinchZoom: boolean;
+  enableZoomControl: boolean;
+  useExperimentalCssZoom: boolean;
+  enableLocalStorage: boolean;
+  autoReadViewport: boolean;
+}
+
+interface SmoothPinchZoomCallback {
   customZoomApplicator?: (zoomLevel: number) => void;
   onZoomChange?: (zoomLevel: number, percentage: number) => void;
-  enableWheelZoom?: boolean;
-  enablePinchZoom?: boolean;
-  enableZoomControl?: boolean;
-  autoReadViewport?: boolean;
-  useExperimentalCssZoom?: boolean;
-  enableLocalStorage?: boolean;
   shouldAllowZoom?: (source: ZoomSource, target?: EventTarget) => boolean;
 }
+
+export interface SmoothPinchZoomConfig
+  extends EnabledOptions,
+    SmoothPinchZoomCallback {
+  minZoom: number;
+  maxZoom: number;
+  initialZoom: number;
+  wheelIncrement: number;
+}
+
+export type SmoothPinchZoomOptions = Partial<SmoothPinchZoomConfig>;
 
 export interface ZoomEvent {
   zoomLevel: number;
   percentage: number;
   source: ZoomSource;
-}
-
-export interface ViewportValues {
-  initialScale: number | null;
-  minimumScale: number | null;
-  maximumScale: number | null;
-  userScalable: boolean;
 }

@@ -1,4 +1,8 @@
+import { DragDetector } from "pithos/gestures/drag-detector";
 import { SmoothPinchZoomControls } from "../types/types";
+import { easeOutBack } from "pithos/animations/ease-functions";
+import { DragCallbacks } from "pithos/types/gestures/drag";
+import { Nullable } from "pithos/types/common";
 
 export interface ZoomControlOptions {
   onZoomIn?: () => void;
@@ -12,21 +16,22 @@ export interface ZoomControlOptions {
 export class ZoomControl {
   private element: HTMLElement;
   private controls: SmoothPinchZoomControls;
+  private dragDetector: Nullable<DragDetector> = null;
 
   constructor(controls: SmoothPinchZoomControls) {
     this.controls = controls;
     this.element = this.createControl();
+    this.element.classList.add("hidden");
   }
 
   private _calcZoom(increment: number): number {
-    const newZoom = this.controls.getZoom() + increment;
-    return newZoom;
+    return this.controls.getZoom() + increment;
   }
 
   private _updateZoom(zoom: number): void {
     this.controls.animateZoom(zoom, {
       duration: 300,
-      easing: "back",
+      easing: easeOutBack,
     });
   }
 
@@ -71,20 +76,34 @@ export class ZoomControl {
     button.textContent = symbol;
     button.className = "zoom-control-button";
     button.onclick = onClick;
-
     return button;
   }
 
   private createZoomIndicator(): HTMLElement {
     const indicator = document.createElement("div");
     indicator.className = "zoom-indicator";
-
-    // Ajouter la logique de slider virtuel
-    indicator.addEventListener("mousedown", (e) => this.startSliderMode(e));
-    indicator.addEventListener("mouseup", () => this.stopSliderMode());
-    indicator.addEventListener("mouseleave", () => this.stopSliderMode());
-
+    this.initializeDragDetector(indicator);
     return indicator;
+  }
+
+  private initializeDragDetector(indicator: HTMLElement): void {
+    const callbacks: DragCallbacks = {
+      onDragLeft: (distance: number) => {
+        this.controls.zoomOut(Math.min(distance * 0.5, 2));
+      },
+      onDragRight: (distance: number) => {
+        this.controls.zoomIn(Math.min(distance * 0.5, 2));
+      },
+    };
+
+    this.dragDetector = new DragDetector(callbacks, {
+      threshold: 2,
+      axis: "x",
+      gestureType: "mouse",
+      preventDefaultOnStart: true,
+    });
+
+    this.dragDetector.attachTo(indicator);
   }
 
   private createSeparator(): HTMLElement {
@@ -104,23 +123,16 @@ export class ZoomControl {
   }
 
   public show(): void {
-    this.element.style.opacity = "1";
-    this.element.style.transform = "translateX(-50%) scale(1)";
-    this.element.style.backdropFilter = "blur(20px)";
-    this.element.style.filter = "blur(0px)";
+    this.element.classList.remove("hidden");
+    this.element.classList.add("visible");
   }
 
   public hide(): void {
-    this.element.style.opacity = "0";
-    this.element.style.transform = "translateX(-50%) scale(0)";
-
-    setTimeout(() => {
-      this.element.style.backdropFilter = "blur(0px)";
-      this.element.style.filter = "blur(20px)";
-    }, 200);
+    this.element.classList.remove("visible");
+    this.element.classList.add("hidden");
   }
 
-  public mount(container: HTMLElement = document.body): void {
+  public mount(): void {
     const zoomContainer = document.createElement("div");
     zoomContainer.className = "zoom-container";
 
@@ -134,43 +146,12 @@ export class ZoomControl {
     return this.element;
   }
 
-  private startSliderMode(event: MouseEvent): void {
-    const indicator = this.element.querySelector(
-      ".zoom-indicator"
-    ) as HTMLElement;
-    if (!indicator) return;
-
-    const startX = event.screenX;
-    let lastX = startX;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const currentX = e.screenX;
-      const diff = currentX - lastX;
-
-      if (Math.abs(diff) > 2) {
-        if (diff > 0) {
-          this.controls.zoomIn(1);
-        } else {
-          this.controls.zoomOut(1);
-        }
-        lastX = currentX;
-      }
-    };
-
-    const handleMouseUp = () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-    };
-
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
-  }
-
-  private stopSliderMode(): void {
-    // Cette méthode est appelée mais la logique est dans startSliderMode
-  }
-
   public destroy(): void {
+    if (this.dragDetector) {
+      this.dragDetector.destroy();
+      this.dragDetector = null;
+    }
+
     if (this.element.parentNode) {
       this.element.parentNode.removeChild(this.element);
     }

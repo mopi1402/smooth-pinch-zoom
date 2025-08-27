@@ -10,14 +10,16 @@
     "preview": "vite preview",
     "type-check": "tsc --noEmit",
     "lint": "eslint src --ext ts --fix",
-    "deploy": "vercel --prod",
-    "deploy:dist": "npm run build && cd dist && vercel --prod"
+    "deploy": "npm run build && cd dist && vercel --prod"
   },
   "dependencies": {
+    "leaflet": "1.9.4",
     "maplibre-gl": "5.7.0",
+    "pithos": "^1.0.10",
     "smooth-pinch-zoom": "workspace:*"
   },
   "devDependencies": {
+    "@types/leaflet": "1.9.20",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
     "eslint": "^8.57.0",

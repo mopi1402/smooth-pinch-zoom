@@ -6,12 +6,8 @@ export const DEFAULT_CONFIG = {
   enableWheelZoom: true,
   enablePinchZoom: true,
   autoReadViewport: true,
-  useExperimentalCssZoom: false,
-} as const;
+  enableZoomControl: true,
+  enableLocalStorage: true,
 
-export const DEFAULT_VIEWPORT_VALUES = {
-  initialScale: null,
-  minimumScale: null,
-  maximumScale: null,
-  userScalable: true,
+  useExperimentalCssZoom: false,
 } as const;
