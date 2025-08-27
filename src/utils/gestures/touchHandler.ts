@@ -20,14 +20,12 @@ export class TouchGestureHandler {
     callbacks?: {
       onPinchChange?: (scale: number, centerX: number, centerY: number) => void;
       onPinchStart?: () => void;
-      onPinchEnd?: () => void;
       shouldAllowZoom?: (source: "pinch", target?: EventTarget) => boolean;
     }
   ) {
     this.element = element;
     this.onPinchChange = callbacks?.onPinchChange;
     this.onPinchStart = callbacks?.onPinchStart;
-    this.onPinchEnd = callbacks?.onPinchEnd;
     this.shouldAllowZoom = callbacks?.shouldAllowZoom;
 
     this.bindEvents();

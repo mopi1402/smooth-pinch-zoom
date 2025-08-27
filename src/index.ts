@@ -16,6 +16,7 @@ import { WheelGestureHandler } from "./utils/gestures/wheelHandler";
 import { ZoomControlController } from "./ui/zoomControlController";
 import { EasingType } from "./types/animationTypes";
 import { ZoomEvents } from "./types/types";
+import { Storage } from "./utils/storage";
 
 export class SmoothPinchZoom implements SmoothPinchZoomControls {
   private currentZoom = 1;
@@ -30,6 +31,7 @@ export class SmoothPinchZoom implements SmoothPinchZoomControls {
   private enableZoomControl: boolean;
   private autoReadViewport: boolean;
   private useExperimentalCssZoom: boolean;
+  private enableLocalStorage: boolean;
   private shouldAllowZoom?: (
     source: "pinch" | "wheel" | "api",
     target?: EventTarget
@@ -77,6 +79,7 @@ export class SmoothPinchZoom implements SmoothPinchZoomControls {
     this.enablePinchZoom =
       options.enablePinchZoom ?? DEFAULT_CONFIG.enablePinchZoom;
     this.enableZoomControl = options.enableZoomControl ?? true;
+    this.enableLocalStorage = options.enableLocalStorage ?? true;
     this.useExperimentalCssZoom =
       options.useExperimentalCssZoom ?? DEFAULT_CONFIG.useExperimentalCssZoom;
     this.shouldAllowZoom = options.shouldAllowZoom;
@@ -97,10 +100,22 @@ export class SmoothPinchZoom implements SmoothPinchZoomControls {
     }
 
     this.init();
+
+    if (this.enableLocalStorage) {
+      window.addEventListener("beforeunload", () => {
+        Storage.set("smooth-pinch-zoom-level", this.currentZoom);
+      });
+    }
   }
 
   private init(): void {
-    if (this.initialZoom !== 1) {
+    if (this.enableLocalStorage) {
+      this.applyZoom(
+        Storage.get<number>("smooth-pinch-zoom-level", this.initialZoom) ??
+          this.initialZoom,
+        "api"
+      );
+    } else if (this.initialZoom !== 1) {
       this.applyZoom(this.initialZoom, "api");
     }
 
@@ -129,9 +144,6 @@ export class SmoothPinchZoom implements SmoothPinchZoomControls {
       onPinchChange: (scaleChange: number) => {
         const newZoom = this.clampZoom(this.baseZoom * scaleChange);
         this.applyZoom(newZoom, "pinch");
-      },
-      onPinchEnd: () => {
-        this.currentZoom = this.getCurrentAppliedZoom();
       },
       shouldAllowZoom: this.shouldAllowZoom,
     });
@@ -199,6 +211,7 @@ export class SmoothPinchZoom implements SmoothPinchZoomControls {
       this.applyDefaultZoom(zoomLevel);
     }
 
+    this.currentZoom = zoomLevel;
     const percentage = zoomLevel * 100;
 
     if (this.onZoomChange) {
@@ -251,16 +264,6 @@ export class SmoothPinchZoom implements SmoothPinchZoomControls {
         },
       })
     );
-  }
-
-  private getCurrentAppliedZoom(): number {
-    if (this.supportsCSSZoom) {
-      return parseFloat(document.documentElement.style.zoom || "1");
-    } else {
-      const transform = document.body.style.transform;
-      const scaleMatch = transform.match(/scale\(([^)]+)\)/);
-      return scaleMatch ? parseFloat(scaleMatch[1]) : 1;
-    }
   }
 
   public setZoom(percentage: number): void {
@@ -408,8 +411,6 @@ export class SmoothPinchZoom implements SmoothPinchZoomControls {
     if (this.zoomControlController) {
       this.zoomControlController.destroy();
     }
-
-    this.resetZoom();
   }
 }
 

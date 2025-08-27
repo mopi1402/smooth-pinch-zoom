@@ -30,6 +30,7 @@ interface SmoothPinchZoomOptions {
     enableZoomControl?: boolean;
     autoReadViewport?: boolean;
     useExperimentalCssZoom?: boolean;
+    enableLocalStorage?: boolean;
     shouldAllowZoom?: (source: ZoomSource, target?: EventTarget) => boolean;
 }
 interface ZoomEvent {
@@ -57,6 +58,7 @@ declare class SmoothPinchZoom implements SmoothPinchZoomControls {
     private enableZoomControl;
     private autoReadViewport;
     private useExperimentalCssZoom;
+    private enableLocalStorage;
     private shouldAllowZoom?;
     private baseZoom;
     private wheelListener?;
@@ -76,7 +78,6 @@ declare class SmoothPinchZoom implements SmoothPinchZoomControls {
     private clampZoom;
     private applyZoom;
     private applyDefaultZoom;
-    private getCurrentAppliedZoom;
     setZoom(percentage: number): void;
     getZoom(): number;
     getMinZoom(): number;

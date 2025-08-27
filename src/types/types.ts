@@ -36,6 +36,7 @@ export interface SmoothPinchZoomOptions {
   enableZoomControl?: boolean;
   autoReadViewport?: boolean;
   useExperimentalCssZoom?: boolean;
+  enableLocalStorage?: boolean;
   shouldAllowZoom?: (source: ZoomSource, target?: EventTarget) => boolean;
 }
 

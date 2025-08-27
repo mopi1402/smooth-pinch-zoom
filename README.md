@@ -175,18 +175,19 @@ The library provides SCSS utility functions for automatic zoom management:
 
 ### Constructor Options
 
-| Option                      | Type     | Default | Description                           |
-| --------------------------- | -------- | ------- | ------------------------------------- |
-| `minZoom`                   | number   | 0.25    | Minimum zoom level (25%)              |
-| `maxZoom`                   | number   | 5.0     | Maximum zoom level (500%)             |
-| `wheelIncrement`            | number   | 0.01    | Zoom step for wheel scroll (1%)       |
-| `enablePinchZoom`           | boolean  | true    | Enable touch/trackpad pinch           |
-| `enableWheelZoom`           | boolean  | true    | Enable Ctrl+wheel zoom                |
-| `enableZoomControl`         | boolean  | true    | Enable zoom control UI component      |
-| `useExperimentalCssZoom` ⚠️ | boolean  | false   | Enable CSS zoom (experimental)        |
-| `onZoomChange`              | function | -       | Callback for zoom changes             |
-| `shouldAllowZoom`           | function | -       | Guard to control when zoom is allowed |
-| `customZoomApplicator`      | function | -       | Custom zoom implementation            |
+| Option                      | Type     | Default | Description                             |
+| --------------------------- | -------- | ------- | --------------------------------------- |
+| `minZoom`                   | number   | 0.25    | Minimum zoom level (25%)                |
+| `maxZoom`                   | number   | 5.0     | Maximum zoom level (500%)               |
+| `wheelIncrement`            | number   | 0.01    | Zoom step for wheel scroll (1%)         |
+| `enablePinchZoom`           | boolean  | true    | Enable touch/trackpad pinch             |
+| `enableWheelZoom`           | boolean  | true    | Enable Ctrl+wheel zoom                  |
+| `enableZoomControl`         | boolean  | true    | Enable zoom control UI component        |
+| `enableLocalStorage`        | boolean  | true    | Enable zoom persistence in localStorage |
+| `useExperimentalCssZoom` ⚠️ | boolean  | false   | Enable CSS zoom (experimental)          |
+| `onZoomChange`              | function | -       | Callback for zoom changes               |
+| `shouldAllowZoom`           | function | -       | Guard to control when zoom is allowed   |
+| `customZoomApplicator`      | function | -       | Custom zoom implementation              |
 
 ### All Methods
 
